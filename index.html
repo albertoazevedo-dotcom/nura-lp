@@ -89,11 +89,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(240,237,228,.96);backdrop-
 .solucoes-header h2{font-family:'Manrope',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:900;line-height:1.05;letter-spacing:-.04em}
 .solucoes-header h2 em{font-style:italic;color:var(--blue);font-family:'DM Serif Display',serif;font-weight:400}
 .solucoes-header-right p{font-size:16px;line-height:1.75;color:var(--mid)}
-.solucoes-tabs{display:flex;border:2px solid var(--navy);border-radius:4px;overflow:hidden;margin-bottom:40px}
-.solucao-tab{flex:1;padding:14px 10px;border:none;background:var(--cream);cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--mid);border-right:2px solid var(--navy);transition:background .2s,color .2s;text-align:center}
-.solucao-tab:last-child{border-right:none}
-.solucao-tab.active{background:var(--navy);color:#fff}
-.solucao-tab:hover:not(.active){background:var(--cream-d);color:var(--navy)}
+.solucoes-tabs{display:flex;gap:10px;margin-bottom:40px;flex-wrap:wrap}
+.solucao-tab{flex:1;min-width:140px;padding:16px 12px;border:2px solid var(--border);border-radius:6px;background:var(--white);cursor:pointer;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--mid);transition:all .2s;text-align:center;position:relative}
+.solucao-tab::after{content:'↓';display:block;font-size:16px;margin-top:4px;opacity:.3;transition:opacity .2s,transform .2s}
+.solucao-tab:last-child{border-right:2px solid var(--border)}
+.solucao-tab.active{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 4px 16px rgba(17,24,39,.15)}
+.solucao-tab.active::after{opacity:.5;transform:translateY(2px)}
+.solucao-tab:hover:not(.active){background:var(--cream-d);color:var(--navy);border-color:var(--navy);transform:translateY(-1px)}
 .solucao-panel{display:none}
 .solucao-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:48px}
 .solucao-desc h3{font-family:'Manrope',sans-serif;font-size:30px;font-weight:900;letter-spacing:-.03em;margin-bottom:14px;line-height:1.1}
