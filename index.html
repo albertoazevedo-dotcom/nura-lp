@@ -433,16 +433,16 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
   </div>
   <script>
   (function(){
+    var BASE = "https://raw.githubusercontent.com/albertoazevedo-dotcom/nura-lp/main/assets/";
     var logos = [
       { name: "Google",     src: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
-      { name: "Exame",      src: "https://logo.clearbit.com/exame.com" },
+      { name: "Exame",      src: BASE + "logo-exame.png" },
       { name: "Ecovias",    src: "https://www.ecorodovias.com.br/wp-content/uploads/2025/02/logo-ecorodovias.svg" },
-      { name: "Mood:Media", src: "https://logo.clearbit.com/moodmedia.com" },
-
-      { name: "Manus",      src: "https://files.manuscdn.com/assets/image/brand/image/Manus-Glyph-Black.png" },
-      { name: "Inner AI",   src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 40'%3E%3Ctext x='8' y='28' font-family='system-ui,-apple-system,sans-serif' font-size='22' font-weight='300' letter-spacing='1' fill='%230D0D0D'%3EInner %3C/text%3E%3Ctext x='104' y='28' font-family='system-ui,-apple-system,sans-serif' font-size='22' font-weight='700' letter-spacing='1' fill='%230D0D0D'%3EAI%3C/text%3E%3C/svg%3E" },
+      { name: "Mood:Media", src: BASE + "logo-moodmedia.png" },
+      { name: "Manus",      src: BASE + "logo-manus.png" },
+      { name: "Inner AI",   src: BASE + "logo-inner.png" },
       { name: "Meta",       src: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" },
-      { name: "Replit",     src: "https://logo.clearbit.com/replit.com" }
+      { name: "Replit",     src: BASE + "logo-replit.png" }
     ];
     function makeItem(l) {
       return '<div class="marquee-item">' +
