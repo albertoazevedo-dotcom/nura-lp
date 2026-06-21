@@ -160,27 +160,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(240,237,228,.96);backdrop-
 .fundadores-header h2 em{font-style:italic;color:var(--blue);font-family:'DM Serif Display',serif;font-weight:400}
 .fundadores-header p{font-size:16px;color:var(--mid);max-width:480px}
 .fundadores-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.fundador-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--white);transition:border-color .2s,box-shadow .2s}
-.fundador-card:hover{border-color:var(--navy);box-shadow:0 16px 48px rgba(0,0,0,.07)}
-.fundador-top{background:var(--navy);padding:32px 32px 24px;display:flex;align-items:flex-start;gap:20px}
-.fundador-foto{width:72px;height:72px;border-radius:50%;flex-shrink:0;border:3px solid rgba(255,255,255,.12);overflow:hidden}
-.fundador-foto img{width:100%;height:100%;object-fit:cover}
-.fundador-id{flex:1}
-.fundador-nome{font-size:19px;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:3px}
-.fundador-cargo{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:14px}
-.fundador-badges{display:flex;flex-wrap:wrap;gap:7px}
-.fundador-badge{font-size:10px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:100px}
-.fundador-badge.gold{background:rgba(255,230,0,.1);border:1.5px solid rgba(255,230,0,.28);color:#FFE600}
-.fundador-badge.blue{background:rgba(43,76,200,.3);border:1.5px solid rgba(43,76,200,.5);color:#7B9FFF}
-.fundador-badge.green{background:rgba(0,204,106,.1);border:1.5px solid rgba(0,204,106,.28);color:#00CC6A}
-.fundador-bottom{padding:24px 32px 28px;background:var(--white)}
-.fundador-bio{font-size:14px;line-height:1.75;color:var(--mid);margin-bottom:20px}
-.fundador-empresas-label{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--light);margin-bottom:12px}
-.fundador-empresas{display:flex;flex-direction:column;gap:10px}
-.empresa-item{display:flex;align-items:flex-start;gap:10px}
-.empresa-dot{width:5px;height:5px;border-radius:50%;background:var(--navy);flex-shrink:0;margin-top:7px}
-.empresa-item strong{display:block;font-size:13px;font-weight:800;color:var(--navy);letter-spacing:-.01em}
-.empresa-item span{font-size:12px;color:var(--mid);line-height:1.4}
+.fundador-card{border-radius:12px;overflow:hidden;background:#0F2044;position:relative;transition:transform .25s,box-shadow .25s}
+.fundador-card:hover{transform:translateY(-3px);box-shadow:0 24px 56px rgba(0,0,0,.18)}
+.fundador-photo-wrap{position:relative;width:100%;height:400px;overflow:hidden}
+.fundador-photo-wrap img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.fundador-photo-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(15,32,68,.85) 100%)}
+.fundador-name-overlay{position:absolute;bottom:24px;left:28px;z-index:2}
+.fn-first{display:block;font-family:'DM Serif Display',serif;font-style:italic;font-size:38px;font-weight:400;color:#fff;line-height:1.1}
+.fn-last{display:block;font-family:'DM Serif Display',serif;font-style:italic;font-size:38px;font-weight:400;color:#C9A84C;line-height:1.1}
+.fundador-divider{height:1px;background:linear-gradient(to right,#C9A84C,transparent);margin:0 28px}
+.fundador-desc{padding:20px 28px 28px;color:rgba(255,255,255,.7);font-size:15px;line-height:1.7}
 
 /* FORM */
 .form-section{padding:72px 0;background:var(--cream);border-bottom:1px solid var(--border)}
@@ -567,49 +556,26 @@ footer{padding:36px 0;border-top:1px solid var(--border);background:var(--cream)
     </div>
     <div class="fundadores-grid">
       <div class="fundador-card">
-        <div class="fundador-top">
-          <div class="fundador-foto"><img src="https://raw.githubusercontent.com/albertoazevedo-dotcom/nura-lp/main/assets/foto-iza.jpeg" alt="Izabela Anholett"></div>
-          <div class="fundador-id">
-            <div class="fundador-nome">Izabela Anholett</div>
-            <div class="fundador-cargo">Co-fundadora &amp; CEO</div>
-            <div class="fundador-badges">
-              <span class="fundador-badge gold">🏆 Top Voice #1 IA no Brasil</span>
-              <span class="fundador-badge green">✦ +100K alunos formados</span>
-              <span class="fundador-badge blue">📐 Metodologia validada</span>
-            </div>
+        <div class="fundador-photo-wrap">
+          <img src="https://raw.githubusercontent.com/albertoazevedo-dotcom/nura-lp/main/assets/foto-iza.jpeg" alt="Izabela Anholett">
+          <div class="fundador-name-overlay">
+            <span class="fn-first">Izabela</span>
+            <span class="fn-last">Anholett</span>
           </div>
         </div>
-        <div class="fundador-bottom">
-          <p class="fundador-bio">Referência nacional em Inteligência Artificial aplicada ao mundo corporativo. Izabela construiu sua trajetória na interseção entre tecnologia, liderança e educação executiva — formando mais de 100 mil profissionais e líderes em IA no Brasil. É reconhecida pelo LinkedIn como a Top Voice #1 de IA no país.</p>
-          <div class="fundador-empresas-label">Trajetória</div>
-          <div class="fundador-empresas">
-            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Nura AI</strong><span>Co-fundadora e CEO — ecossistema de IA aplicada para empresas e líderes</span></div></div>
-            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Educação Executiva em IA</strong><span>+100K profissionais capacitados em programas práticos de Inteligência Artificial</span></div></div>
-            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Consultoria Estratégica</strong><span>Projetos de transformação digital e implementação de IA em grandes organizações</span></div></div>
-          </div>
-        </div>
+        <div class="fundador-divider"></div>
+        <div class="fundador-desc">Descrição da Iza em breve.</div>
       </div>
       <div class="fundador-card">
-        <div class="fundador-top">
-          <div class="fundador-foto"><img src="https://raw.githubusercontent.com/albertoazevedo-dotcom/nura-lp/main/assets/foto-alberto.jpeg" alt="Alberto Azevedo"></div>
-          <div class="fundador-id">
-            <div class="fundador-nome">Alberto Azevedo</div>
-            <div class="fundador-cargo">Co-fundador &amp; COO</div>
-            <div class="fundador-badges">
-              <span class="fundador-badge blue">⚙️ Estratégia &amp; Operações</span>
-              <span class="fundador-badge green">✦ Gestão de alto crescimento</span>
-            </div>
+        <div class="fundador-photo-wrap">
+          <img src="https://raw.githubusercontent.com/albertoazevedo-dotcom/nura-lp/main/assets/foto-alberto.jpeg" alt="Alberto Azevedo">
+          <div class="fundador-name-overlay">
+            <span class="fn-first">Alberto</span>
+            <span class="fn-last">Azevedo</span>
           </div>
         </div>
-        <div class="fundador-bottom">
-          <p class="fundador-bio">Executivo com trajetória sólida em operações, estratégia e crescimento de negócios. Alberto traz para a Nura AI a visão de quem construiu e escalou estruturas complexas — traduzindo o potencial da Inteligência Artificial em processos que funcionam no mundo real, com método e resultado mensurável.</p>
-          <div class="fundador-empresas-label">Trajetória</div>
-          <div class="fundador-empresas">
-            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Nura AI</strong><span>Co-fundador e COO — estrutura operacional e crescimento do ecossistema</span></div></div>
-            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Gestão Executiva</strong><span>Liderança de operações e times em empresas de diferentes setores e portes</span></div></div>
-            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Estratégia &amp; Growth</strong><span>Projetos de estruturação comercial, escala e transformação organizacional</span></div></div>
-          </div>
-        </div>
+        <div class="fundador-divider"></div>
+        <div class="fundador-desc">Descrição do Alberto em breve.</div>
       </div>
     </div>
   </div>
