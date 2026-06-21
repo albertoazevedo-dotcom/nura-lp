@@ -87,8 +87,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.93);backdrop-
 .marquee-track:hover{animation-play-state:paused}
 @keyframes marquee-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .marquee-item{display:flex;align-items:center;padding:0 40px;flex-shrink:0}
-.marquee-logo{height:26px;width:auto;max-width:110px;object-fit:contain;filter:grayscale(1) opacity(.4);transition:filter .3s;display:block}
-.marquee-item:hover .marquee-logo{filter:grayscale(0) opacity(1)}
+.marquee-logo{height:26px;width:auto;max-width:110px;object-fit:contain;filter:opacity(.7);transition:filter .3s;display:block}
+.marquee-item:hover .marquee-logo{filter:opacity(1)}
 .marquee-fallback{font-size:13px;font-weight:800;letter-spacing:-.02em;color:rgba(0,0,0,.22);transition:color .3s;white-space:nowrap}
 .marquee-item:hover .marquee-fallback{color:rgba(0,0,0,.7)}
 
@@ -672,7 +672,7 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
 </section>
 
 <!-- MÉTODO -->
-<section class="metodo" id="metodo">
+<section class="metodo" id="metodo" style="display:none">
   <div class="container">
     <div class="metodo-header">
       <span class="overline">Como reprogramamos sua empresa</span>
@@ -754,7 +754,7 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
 </section>
 
 <!-- CTA STRIP 3 -->
-<div class="cta-strip on-bg">
+<div class="cta-strip on-bg" style="display:none">
   <a href="#form" class="btn-black" style="font-size:16px;padding:18px 48px;">Quero evoluir em IA →</a>
 </div>
 
