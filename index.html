@@ -429,29 +429,32 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
     <div class="clients-line"></div>
   </div>
   <div class="marquee-outer">
-    <div class="marquee-track">
-      <!-- Set 1 -->
-      <div class="marquee-item"><img src="https://logo.clearbit.com/google.com" alt="Google" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Google</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/exame.com" alt="Exame" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Exame</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/ecorodovias.com.br" alt="Ecovias" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Ecovias</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/moodmedia.com" alt="Mood Media" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Mood:Media</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/nexxa.com.br" alt="Nexxa" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Nexxa</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/manus.im" alt="Manus" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Manus</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/inner.ai" alt="Inner AI" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Inner AI</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/meta.com" alt="Meta" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Meta</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/replit.com" alt="Replit" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Replit</span></div>
-      <!-- Set 2 (duplicate for seamless loop) -->
-      <div class="marquee-item"><img src="https://logo.clearbit.com/google.com" alt="Google" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Google</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/exame.com" alt="Exame" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Exame</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/ecorodovias.com.br" alt="Ecovias" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Ecovias</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/moodmedia.com" alt="Mood Media" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Mood:Media</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/nexxa.com.br" alt="Nexxa" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Nexxa</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/manus.im" alt="Manus" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Manus</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/inner.ai" alt="Inner AI" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Inner AI</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/meta.com" alt="Meta" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Meta</span></div>
-      <div class="marquee-item"><img src="https://logo.clearbit.com/replit.com" alt="Replit" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Replit</span></div>
-    </div>
+    <div class="marquee-track" id="marquee-track"></div>
   </div>
+  <script>
+  (function(){
+    var logos = [
+      { name: "Google",     src: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
+      { name: "Exame",      src: "https://logo.clearbit.com/exame.com" },
+      { name: "Ecovias",    src: "https://www.ecorodovias.com.br/wp-content/uploads/2025/02/logo-ecorodovias.svg" },
+      { name: "Mood:Media", src: "https://logo.clearbit.com/moodmedia.com" },
+
+      { name: "Manus",      src: "https://files.manuscdn.com/assets/image/brand/image/Manus-Glyph-Black.png" },
+      { name: "Inner AI",   src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 40'%3E%3Ctext x='8' y='28' font-family='system-ui,-apple-system,sans-serif' font-size='22' font-weight='300' letter-spacing='1' fill='%230D0D0D'%3EInner %3C/text%3E%3Ctext x='104' y='28' font-family='system-ui,-apple-system,sans-serif' font-size='22' font-weight='700' letter-spacing='1' fill='%230D0D0D'%3EAI%3C/text%3E%3C/svg%3E" },
+      { name: "Meta",       src: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" },
+      { name: "Replit",     src: "https://logo.clearbit.com/replit.com" }
+    ];
+    function makeItem(l) {
+      return '<div class="marquee-item">' +
+        '<img src="' + l.src + '" alt="' + l.name + '" class="marquee-logo" ' +
+        'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'inline\'">' +
+        '<span class="marquee-fallback" style="display:none">' + l.name + '</span>' +
+        '</div>';
+    }
+    var html = logos.map(makeItem).join('') + logos.map(makeItem).join('');
+    document.getElementById('marquee-track').innerHTML = html;
+  })();
+  </script>
 </section>
 
 <!-- MANIFESTO -->
@@ -485,6 +488,9 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
             <strong>Transformamos mentalidade e prática</strong>
             <p>Usamos IA como meio, não como fim — para criar organizações mais inteligentes, rápidas e preparadas.</p>
           </div>
+        </div>
+        <div style="padding-top:28px;text-align:right;">
+          <a href="#form" class="btn-black">Quero evoluir em IA →</a>
         </div>
       </div>
     </div>
@@ -673,8 +679,8 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
       <h2>Progresso real,<br>no ritmo <em>certo.</em></h2>
       <p>Cada etapa é desenhada para gerar clareza antes de gerar complexidade. Avançamos no seu ritmo — com marcos claros, entregáveis definidos e resultado visível desde o início.</p>
     </div>
-    <!-- AI Hub -->
-    <div class="ia-hub-wrapper">
+    <!-- AI Hub (removido) -->
+    <div class="ia-hub-wrapper" style="display:none">
       <div class="ia-hub">
         <svg class="hub-lines" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
           <g stroke="#E4E4E4" stroke-width="1.5" stroke-dasharray="4 4">
@@ -752,30 +758,6 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
   <a href="#form" class="btn-black" style="font-size:16px;padding:18px 48px;">Quero evoluir em IA →</a>
 </div>
 
-<!-- PARA QUEM -->
-<section class="para-quem">
-  <div class="container">
-    <div class="para-quem-header">
-      <span class="overline">Para quem é a Nura AI</span>
-      <h2>Feito para quem<br>decide o jogo.</h2>
-      <p>Não atendemos a todos — atendemos quem tem compromisso com resultado real e entende que IA não é mágica, é método.</p>
-    </div>
-    <div class="perfis-grid">
-      <div class="perfil-card"><div class="perfil-icon">🏢</div><strong>CEOs e Fundadores</strong><p>Que querem usar IA para ganhar vantagem competitiva real — não só aparecer em palco falando sobre o tema.</p></div>
-      <div class="perfil-card"><div class="perfil-icon">📊</div><strong>Diretores e Gestores</strong><p>Que precisam transformar processos e times sem travar a operação — com método, velocidade e resultado rastreável.</p></div>
-      <div class="perfil-card"><div class="perfil-icon">🎓</div><strong>Times inteiros</strong><p>Que precisam ser capacitados com profundidade — não com treinamentos genéricos de prateleira.</p></div>
-    </div>
-    <div class="para-quem-nao">
-      <div class="para-quem-nao-label">Não é pra você se</div>
-      <div class="pqn-items">
-        <span class="pqn-item">Quer resultados sem engajamento interno</span>
-        <span class="pqn-item">Busca apenas um curso online barato</span>
-        <span class="pqn-item">Não tem disposição para mudar processos</span>
-        <span class="pqn-item">Quer automação sem estratégia</span>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- FORM -->
 <section class="form-section" id="form">
@@ -836,7 +818,7 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
     <div class="fundadores-grid">
       <div class="fundador-card">
         <div class="fundador-top">
-          <div class="fundador-foto" style="background:linear-gradient(135deg,#1A1AFF,#00CC6A);">I</div>
+          <div class="fundador-foto"><img src="https://raw.githubusercontent.com/albertoazevedo-dotcom/nura-lp/main/assets/foto-iza.jpeg" alt="Izabela Anholett"></div>
           <div class="fundador-id">
             <div class="fundador-nome">Izabela Anholett</div>
             <div class="fundador-cargo">Co-fundadora & CEO</div>
@@ -859,7 +841,7 @@ footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)
       </div>
       <div class="fundador-card">
         <div class="fundador-top">
-          <div class="fundador-foto" style="background:linear-gradient(135deg,#2E2E2E,#6B6B6B);">A</div>
+          <div class="fundador-foto"><img src="https://raw.githubusercontent.com/albertoazevedo-dotcom/nura-lp/main/assets/foto-alberto.jpeg" alt="Alberto Azevedo"></div>
           <div class="fundador-id">
             <div class="fundador-nome">Alberto Azevedo</div>
             <div class="fundador-cargo">Co-fundador & COO</div>
