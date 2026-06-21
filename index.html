@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nura AI — Do ruído à clareza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:     #0D0D0D;
+  --off-black: #1A1A1A;
+  --charcoal:  #2E2E2E;
+  --mid:       #6B6B6B;
+  --light:     #B0B0B0;
+  --border:    #E4E4E4;
+  --bg:        #FAFAF8;
+  --white:     #FFFFFF;
+  --accent:    #1A1AFF;
+  --neon:      #00FF87;
+  --neon-dark: #00CC6A;
+  --red:       #FF3B30;
+  --hero-bg:   #05050A;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Manrope',sans-serif;background:var(--white);color:var(--black);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+.container{max-width:1180px;margin:0 auto;padding:0 28px}
+.overline{font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--mid);display:block;margin-bottom:16px}
+
+/* BUTTONS */
+.btn-black{display:inline-flex;align-items:center;gap:8px;background:var(--black);color:var(--white);font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;padding:16px 32px;border-radius:4px;border:none;cursor:pointer;text-decoration:none;transition:background .2s,transform .15s;letter-spacing:-.01em}
+.btn-black:hover{background:var(--charcoal);transform:translateY(-1px)}
+.btn-white{display:inline-flex;align-items:center;gap:8px;background:var(--white);color:var(--black);font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;padding:16px 32px;border-radius:4px;border:none;cursor:pointer;text-decoration:none;transition:opacity .2s,transform .15s;white-space:nowrap}
+.btn-white:hover{opacity:.88;transform:translateY(-1px)}
+.btn-outline-white{display:inline-flex;align-items:center;gap:8px;background:transparent;color:rgba(255,255,255,.72);font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;padding:15px 30px;border-radius:4px;border:2px solid rgba(255,255,255,.18);cursor:pointer;text-decoration:none;transition:border-color .2s,color .2s}
+.btn-outline-white:hover{border-color:rgba(255,255,255,.5);color:#fff}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--black);font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;padding:15px 30px;border-radius:4px;border:2px solid var(--black);cursor:pointer;text-decoration:none;transition:background .2s,color .2s}
+.btn-outline:hover{background:var(--black);color:var(--white)}
+.btn-white-sm{display:inline-flex;align-items:center;gap:8px;background:var(--white);color:var(--black);font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;padding:16px 32px;border-radius:4px;border:none;cursor:pointer;text-decoration:none;transition:opacity .2s;white-space:nowrap}
+.btn-white-sm:hover{opacity:.85}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo-img{height:34px;width:auto;filter:brightness(0);display:block}
+.logo-fallback{font-family:'Manrope',sans-serif;font-size:20px;font-weight:900;letter-spacing:-.04em;color:var(--black);display:flex;align-items:center;gap:6px}
+.logo-square{width:28px;height:28px;background:var(--black);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo-square svg{width:14px;height:14px}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+.nav-links a{font-size:14px;font-weight:600;color:var(--mid);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--black)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-cta{padding:11px 22px!important;font-size:13px!important}
+
+/* HERO */
+.hero{background:var(--hero-bg);background-image:radial-gradient(ellipse 90% 80% at 75% -5%,rgba(26,26,255,.2) 0%,transparent 55%),radial-gradient(ellipse 50% 50% at 5% 95%,rgba(0,255,135,.08) 0%,transparent 50%);color:var(--white);padding:104px 0 96px;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.05)}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 0%,transparent 100%);mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 0%,transparent 100%)}
+.hero-inner{display:grid;grid-template-columns:1fr 400px;gap:80px;align-items:center;position:relative;z-index:1}
+.hero-kicker{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.hero-kicker-line{width:32px;height:2px;background:var(--neon)}
+.hero-kicker span{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--neon)}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(48px,6.5vw,84px);font-weight:400;line-height:.97;letter-spacing:-.025em;color:var(--white);margin-bottom:24px}
+.hero h1 em{font-style:italic;color:var(--neon)}
+.hero-sub{font-size:17px;line-height:1.75;color:rgba(255,255,255,.52);max-width:520px;margin-bottom:40px;font-weight:400}
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+
+/* HERO CARD — glassmorphism */
+.hero-card{background:rgba(255,255,255,.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:36px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 40px 80px rgba(0,0,0,.5);position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:0;left:36px;right:36px;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);border-radius:0 0 2px 2px}
+.hero-card-label{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:24px}
+.hero-stat-row{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.hero-stat-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.hero-stat-number{font-family:'DM Serif Display',serif;font-size:42px;font-weight:400;letter-spacing:-.03em;color:var(--white);line-height:1;margin-bottom:4px}
+.hero-stat-desc{font-size:12px;font-weight:500;color:rgba(255,255,255,.42);line-height:1.4}
+.hero-stat-badge{display:inline-block;font-size:10px;font-weight:800;padding:3px 9px;border-radius:100px;margin-top:6px}
+
+/* CLIENTS MARQUEE */
+.clients-strip{padding:36px 0;border-bottom:1px solid var(--border);background:var(--white)}
+.clients-top{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding:0 28px;max-width:1180px;margin-left:auto;margin-right:auto}
+.clients-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--light);white-space:nowrap;flex-shrink:0}
+.clients-line{flex:1;height:1px;background:var(--border)}
+.marquee-outer{overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0%,black 8%,black 92%,transparent 100%);mask-image:linear-gradient(to right,transparent 0%,black 8%,black 92%,transparent 100%)}
+.marquee-track{display:flex;gap:0;align-items:center;width:max-content;animation:marquee-scroll 40s linear infinite}
+.marquee-track:hover{animation-play-state:paused}
+@keyframes marquee-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-item{display:flex;align-items:center;padding:0 40px;flex-shrink:0}
+.marquee-logo{height:26px;width:auto;max-width:110px;object-fit:contain;filter:grayscale(1) opacity(.4);transition:filter .3s;display:block}
+.marquee-item:hover .marquee-logo{filter:grayscale(0) opacity(1)}
+.marquee-fallback{font-size:13px;font-weight:800;letter-spacing:-.02em;color:rgba(0,0,0,.22);transition:color .3s;white-space:nowrap}
+.marquee-item:hover .marquee-fallback{color:rgba(0,0,0,.7)}
+
+/* MANIFESTO */
+.manifesto{padding:100px 0;border-bottom:1px solid var(--border)}
+.manifesto-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.manifesto-left h2{font-family:'DM Serif Display',serif;font-size:clamp(34px,4.5vw,56px);font-weight:400;line-height:1.1;letter-spacing:-.02em;color:var(--black);margin-bottom:28px}
+.manifesto-left h2 em{font-style:italic;color:var(--accent)}
+.manifesto-left p{font-size:16px;line-height:1.8;color:var(--mid);margin-bottom:16px}
+.manifesto-left p strong{color:var(--black)}
+.manifesto-right{padding-top:8px}
+.manifesto-pillar{display:flex;gap:20px;padding:24px 0;border-bottom:1px solid var(--border)}
+.manifesto-pillar:last-child{border-bottom:none}
+.pillar-num{font-family:'DM Serif Display',serif;font-size:13px;font-weight:400;color:var(--light);width:24px;flex-shrink:0;padding-top:4px;font-style:italic}
+.pillar-content strong{display:block;font-size:16px;font-weight:800;color:var(--black);margin-bottom:6px;letter-spacing:-.02em}
+.pillar-content p{font-size:14px;line-height:1.65;color:var(--mid);margin:0}
+
+/* PROBLEMA */
+.problema{padding:100px 0;background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.problema::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(26,26,255,.07) 0%,transparent 70%);pointer-events:none}
+.problema h2{font-family:'DM Serif Display',serif;font-size:clamp(32px,4.5vw,60px);font-weight:400;letter-spacing:-.02em;line-height:1.05;margin-bottom:56px;max-width:700px}
+.problema h2 em{font-style:italic;color:rgba(255,255,255,.28)}
+.problema-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
+.problema-cell{background:var(--black);padding:36px 28px;border-right:1px solid rgba(255,255,255,.07);transition:background .2s}
+.problema-cell:last-child{border-right:none}
+.problema-cell:hover{background:#0C0C18}
+.problema-icon{font-size:22px;margin-bottom:16px}
+.problema-cell strong{display:block;font-size:15px;font-weight:800;color:var(--white);margin-bottom:8px;letter-spacing:-.02em}
+.problema-cell p{font-size:13px;line-height:1.65;color:rgba(255,255,255,.4)}
+.problema-cta-row{margin-top:56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;padding-top:40px;border-top:1px solid rgba(255,255,255,.08);position:relative}
+.problema-cta-text{font-family:'DM Serif Display',serif;font-size:22px;font-style:italic;color:rgba(255,255,255,.55);max-width:520px;line-height:1.4}
+.problema-cta-text strong{font-style:normal;color:var(--white)}
+
+/* SOLUÇÕES */
+.solucoes{padding:100px 0;border-bottom:1px solid var(--border)}
+.solucoes-header{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:64px}
+.solucoes-header h2{font-family:'DM Serif Display',serif;font-size:clamp(32px,4vw,52px);font-weight:400;line-height:1.08;letter-spacing:-.02em}
+.solucoes-header h2 em{font-style:italic;color:var(--accent)}
+.solucoes-header-right p{font-size:16px;line-height:1.75;color:var(--mid)}
+.solucoes-tabs{display:flex;border:2px solid var(--black);border-radius:6px;overflow:hidden;margin-bottom:40px}
+.solucao-tab{flex:1;padding:14px 10px;border:none;background:var(--white);cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--mid);border-right:2px solid var(--black);transition:background .2s,color .2s;text-align:center}
+.solucao-tab:last-child{border-right:none}
+.solucao-tab.active{background:var(--black);color:var(--white)}
+.solucao-tab:hover:not(.active){background:var(--bg);color:var(--black)}
+.solucao-panel{display:none}
+.solucao-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.solucao-desc h3{font-family:'DM Serif Display',serif;font-size:32px;font-weight:400;letter-spacing:-.02em;margin-bottom:16px;line-height:1.15}
+.solucao-desc p{font-size:15px;line-height:1.8;color:var(--mid);margin-bottom:20px}
+.solucao-tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.stag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:100px;border:1.5px solid var(--border);color:var(--charcoal)}
+.solucao-details-header{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--light);margin-bottom:20px}
+.solucao-feature{display:flex;align-items:flex-start;gap:12px;padding:16px 0;border-bottom:1px solid var(--border)}
+.solucao-feature:last-child{border-bottom:none}
+.sf-icon{width:32px;height:32px;background:var(--bg);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sf-text strong{display:block;font-size:14px;font-weight:700;color:var(--black);margin-bottom:2px}
+.sf-text span{font-size:13px;color:var(--mid)}
+
+/* CASES */
+.cases{padding:100px 0;border-bottom:1px solid var(--border)}
+.cases-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:56px;gap:32px;flex-wrap:wrap}
+.cases-header h2{font-family:'DM Serif Display',serif;font-size:clamp(30px,4vw,48px);font-weight:400;letter-spacing:-.02em;line-height:1.1}
+.cases-header p{font-size:15px;color:var(--mid);max-width:340px;text-align:right;line-height:1.65}
+.cases-featured{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.case-card{border:1px solid var(--border);border-radius:12px;padding:32px;background:var(--white);transition:box-shadow .25s,border-color .25s,transform .25s}
+.case-card:hover{box-shadow:0 16px 48px rgba(0,0,0,.09);border-color:var(--black);transform:translateY(-3px)}
+.case-card.dark{background:var(--black);border-color:var(--black);color:var(--white)}
+.case-card.dark:hover{border-color:#2A2A2A}
+.case-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:12px}
+.case-logo-wrap{display:flex;align-items:center;gap:10px}
+.case-company-logo{height:22px;width:auto;max-width:80px;object-fit:contain;filter:grayscale(1);opacity:.7}
+.case-card.dark .case-company-logo{filter:brightness(0) invert(1);opacity:.85}
+.case-company-block strong{display:block;font-size:15px;font-weight:800;letter-spacing:-.02em;margin-bottom:2px}
+.case-company-block span{font-size:12px;font-weight:500;color:var(--mid)}
+.case-card.dark .case-company-block span{color:rgba(255,255,255,.4)}
+.case-product-badge{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:4px;background:var(--bg);color:var(--mid);white-space:nowrap;flex-shrink:0}
+.case-card.dark .case-product-badge{background:rgba(255,255,255,.07);color:rgba(255,255,255,.45)}
+.case-number{font-family:'DM Serif Display',serif;font-size:60px;font-weight:400;letter-spacing:-.04em;line-height:1;color:var(--black);margin-bottom:6px}
+.case-card.dark .case-number{color:var(--white)}
+.case-number-desc{font-size:14px;font-weight:600;color:var(--mid);margin-bottom:20px}
+.case-card.dark .case-number-desc{color:rgba(255,255,255,.38)}
+.case-quote-text{font-size:15px;line-height:1.7;color:var(--charcoal);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--border)}
+.case-card.dark .case-quote-text{color:rgba(255,255,255,.62);border-left-color:rgba(255,255,255,.12)}
+.case-author{font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.08em}
+.case-card.dark .case-author{color:rgba(255,255,255,.25)}
+
+/* MÉTODO */
+.metodo{padding:100px 0;background:var(--bg);border-bottom:1px solid var(--border)}
+.metodo-header{margin-bottom:64px}
+.metodo-header h2{font-family:'DM Serif Display',serif;font-size:clamp(30px,4vw,48px);font-weight:400;letter-spacing:-.02em;line-height:1.1;margin-bottom:14px}
+.metodo-header h2 em{font-style:italic;color:var(--accent)}
+.metodo-header p{font-size:16px;line-height:1.7;color:var(--mid);max-width:560px}
+.ia-hub-wrapper{display:flex;align-items:center;justify-content:center;margin-bottom:56px;padding:20px 0 8px}
+.ia-hub{position:relative;width:420px;height:420px;flex-shrink:0}
+.hub-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:50%;background:var(--white);border:3px solid var(--border);box-shadow:0 0 0 8px rgba(0,0,0,.04),0 8px 32px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;z-index:10;overflow:hidden}
+.hub-center-logo{width:68px;height:auto;filter:brightness(0);display:block}
+.hub-node{position:absolute;width:72px;height:72px;border-radius:50%;background:#181820;border:2px solid #252535;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:transform .25s,box-shadow .25s;cursor:default}
+.hub-node:hover{transform:scale(1.14);box-shadow:0 8px 32px rgba(0,0,0,.45)}
+.hub-node svg,.hub-node img{width:32px;height:32px;object-fit:contain}
+.hub-node.sm{width:56px;height:56px}
+.hub-node.sm svg,.hub-node.sm img{width:24px;height:24px}
+.hub-lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.metodo-steps{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.metodo-step{padding:36px 28px;border-right:1px solid var(--border);background:var(--white);transition:background .2s}
+.metodo-step:last-child{border-right:none}
+.metodo-step:hover{background:var(--black)}
+.metodo-step:hover .step-num,.metodo-step:hover .step-title,.metodo-step:hover .step-desc{color:var(--white)!important}
+.metodo-step:hover .step-icon-box{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12)}
+.step-num{font-family:'DM Serif Display',serif;font-size:12px;font-style:italic;color:var(--light);margin-bottom:16px;transition:color .2s}
+.step-icon-box{width:44px;height:44px;background:var(--bg);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;transition:all .2s}
+.step-title{font-size:16px;font-weight:800;color:var(--black);margin-bottom:8px;letter-spacing:-.02em;transition:color .2s}
+.step-desc{font-size:13px;line-height:1.65;color:var(--mid);transition:color .2s}
+
+/* PARA QUEM */
+.para-quem{padding:80px 0;border-bottom:1px solid var(--border)}
+.para-quem-header{margin-bottom:56px}
+.para-quem-header h2{font-family:'DM Serif Display',serif;font-size:clamp(30px,4vw,48px);font-weight:400;letter-spacing:-.02em;line-height:1.1;margin-bottom:12px}
+.para-quem-header p{font-size:16px;color:var(--mid);max-width:520px}
+.perfis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:36px}
+.perfil-card{border:1px solid var(--border);border-radius:12px;padding:32px;background:var(--white);transition:border-color .2s,transform .2s}
+.perfil-card:hover{border-color:var(--black);transform:translateY(-2px)}
+.perfil-icon{font-size:30px;margin-bottom:16px}
+.perfil-card strong{display:block;font-size:17px;font-weight:800;color:var(--black);letter-spacing:-.02em;margin-bottom:10px}
+.perfil-card p{font-size:14px;line-height:1.65;color:var(--mid)}
+.para-quem-nao{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:28px 32px;display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap}
+.para-quem-nao-label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red);white-space:nowrap;flex-shrink:0;padding-top:2px}
+.pqn-items{display:flex;gap:28px;flex-wrap:wrap;flex:1}
+.pqn-item{font-size:13px;color:var(--mid);display:flex;align-items:center;gap:8px}
+.pqn-item::before{content:'—';color:var(--red);font-weight:700}
+
+/* FORM */
+.form-section{padding:100px 0;background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.form-section::before{content:'';position:absolute;bottom:-200px;left:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,135,.04) 0%,transparent 70%);pointer-events:none}
+.form-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;position:relative;z-index:1}
+.form-left-dark h2{font-family:'DM Serif Display',serif;font-size:clamp(30px,4vw,52px);font-weight:400;letter-spacing:-.02em;line-height:1.1;margin-bottom:20px}
+.form-left-dark h2 em{font-style:italic;color:rgba(255,255,255,.35)}
+.form-left-dark>p{font-size:16px;line-height:1.8;color:rgba(255,255,255,.45);margin-bottom:36px}
+.form-proof-box{padding:20px 24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px}
+.form-proof-box .label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:10px;display:block}
+.form-proof-box p{font-size:14px;line-height:1.65;color:rgba(255,255,255,.52);margin:0}
+.form-right-dark{background:var(--white);border-radius:16px;padding:40px;color:var(--black);box-shadow:0 32px 80px rgba(0,0,0,.4)}
+.form-right-dark h3{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.form-right-dark p.form-sub{font-size:13px;color:var(--mid);margin-bottom:28px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);margin-bottom:7px}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:12px 14px;font-family:'Manrope',sans-serif;font-size:14px;color:var(--black);outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--light)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--black)}
+.fg textarea{resize:vertical;min-height:80px}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-submit-dark{width:100%;background:var(--black);color:var(--white);font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;padding:17px;border:none;border-radius:6px;cursor:pointer;transition:background .2s;letter-spacing:-.01em;margin-top:8px}
+.form-submit-dark:hover{background:var(--charcoal)}
+.form-footnote{font-size:11px;color:var(--light);text-align:center;margin-top:12px}
+.form-success-dark{display:none;text-align:center;padding:32px 16px}
+.form-success-dark .fsd-check{font-size:40px;margin-bottom:14px}
+.form-success-dark h3{font-size:20px;font-weight:800;margin-bottom:10px}
+.form-success-dark p{font-size:14px;color:var(--mid);line-height:1.65}
+
+/* FUNDADORES */
+.fundadores{padding:100px 0;border-bottom:1px solid var(--border)}
+.fundadores-header{margin-bottom:56px}
+.fundadores-header h2{font-family:'DM Serif Display',serif;font-size:clamp(30px,4vw,46px);font-weight:400;letter-spacing:-.02em;line-height:1.1;margin-bottom:12px}
+.fundadores-header h2 em{font-style:italic;color:var(--accent)}
+.fundadores-header p{font-size:16px;color:var(--mid);max-width:480px}
+.fundadores-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.fundador-card{border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.fundador-card:hover{border-color:var(--black);box-shadow:0 16px 56px rgba(0,0,0,.09)}
+.fundador-top{background:var(--black);padding:36px 36px 28px;display:flex;align-items:flex-start;gap:24px}
+.fundador-foto{width:80px;height:80px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:32px;font-style:italic;color:var(--white);border:3px solid rgba(255,255,255,.1);overflow:hidden}
+.fundador-foto img{width:100%;height:100%;object-fit:cover}
+.fundador-id{flex:1}
+.fundador-nome{font-size:20px;font-weight:800;color:var(--white);letter-spacing:-.03em;margin-bottom:4px}
+.fundador-cargo{font-size:13px;color:rgba(255,255,255,.42);margin-bottom:16px}
+.fundador-badges{display:flex;flex-wrap:wrap;gap:8px}
+.fundador-badge{font-size:11px;font-weight:700;letter-spacing:.04em;padding:5px 12px;border-radius:100px}
+.fundador-badge.gold{background:rgba(255,230,0,.1);border:1.5px solid rgba(255,230,0,.28);color:#FFE600}
+.fundador-badge.blue{background:rgba(26,26,255,.18);border:1.5px solid rgba(26,26,255,.35);color:#7B9FFF}
+.fundador-badge.green{background:rgba(0,204,106,.1);border:1.5px solid rgba(0,204,106,.28);color:#00CC6A}
+.fundador-bottom{background:var(--white);padding:28px 36px 32px}
+.fundador-bio{font-size:14px;line-height:1.75;color:var(--mid);margin-bottom:24px}
+.fundador-empresas-label{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--light);margin-bottom:14px}
+.fundador-empresas{display:flex;flex-direction:column;gap:12px}
+.empresa-item{display:flex;align-items:flex-start;gap:12px}
+.empresa-dot{width:6px;height:6px;border-radius:50%;background:var(--black);flex-shrink:0;margin-top:6px}
+.empresa-item strong{display:block;font-size:13px;font-weight:800;color:var(--black);letter-spacing:-.01em}
+.empresa-item span{font-size:12px;color:var(--mid);line-height:1.4}
+
+/* FAQ */
+.faq{padding:80px 0 100px;border-bottom:1px solid var(--border)}
+.faq-header{margin-bottom:48px}
+.faq-header h2{font-family:'DM Serif Display',serif;font-size:clamp(28px,3.5vw,42px);font-weight:400;letter-spacing:-.02em}
+.faq-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 60px}
+.faq-item{border-top:1px solid var(--border);padding:20px 0}
+.faq-item:last-child{border-bottom:1px solid var(--border)}
+.faq-q{width:100%;background:none;border:none;text-align:left;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;cursor:pointer;font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;color:var(--black);letter-spacing:-.01em;padding:0}
+.faq-q-icon{font-size:20px;color:var(--mid);flex-shrink:0;transition:transform .3s;margin-top:1px}
+.faq-item.open .faq-q-icon{transform:rotate(45deg);color:var(--black)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding-top:12px;font-size:14px;line-height:1.75;color:var(--mid)}
+
+/* FINAL CTA */
+.final-cta{padding:120px 0;background:var(--hero-bg);text-align:center;position:relative;overflow:hidden}
+.final-cta::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(26,26,255,.07) 0%,transparent 65%);pointer-events:none}
+.final-cta::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 0%,transparent 100%);mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 0%,transparent 100%)}
+.final-cta h2{font-family:'DM Serif Display',serif;font-size:clamp(40px,6vw,76px);font-weight:400;letter-spacing:-.03em;line-height:.97;margin-bottom:28px;color:var(--white);position:relative;z-index:1}
+.final-cta h2 em{font-style:italic;color:var(--neon)}
+.final-cta p{font-size:18px;line-height:1.7;color:rgba(255,255,255,.42);max-width:500px;margin:0 auto 48px;position:relative;z-index:1}
+.final-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;position:relative;z-index:1}
+.final-note{margin-top:24px;font-size:13px;color:rgba(255,255,255,.22);position:relative;z-index:1}
+
+/* FOOTER */
+footer{padding:40px 0;border-top:1px solid var(--border);background:var(--white)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-copy{font-size:13px;color:var(--light)}
+.footer-links{display:flex;gap:24px;list-style:none}
+.footer-links a{font-size:13px;color:var(--light);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--black)}
+
+/* CTA STRIP */
+.cta-strip{padding:56px 0;text-align:center;border-bottom:1px solid var(--border)}
+.cta-strip.on-bg{background:var(--bg)}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-card{display:none}
+  .manifesto-grid{grid-template-columns:1fr;gap:48px}
+  .problema-grid{grid-template-columns:1fr 1fr}
+  .solucoes-header{grid-template-columns:1fr;gap:20px}
+  .solucao-panel.active{grid-template-columns:1fr}
+  .metodo-steps{grid-template-columns:1fr 1fr}
+  .metodo-step{border-right:none;border-bottom:1px solid var(--border)}
+  .metodo-step:nth-child(odd){border-right:1px solid var(--border)}
+  .ia-hub{width:320px;height:320px}
+  .hub-center{width:86px;height:86px}
+  .hub-node{width:56px;height:56px}
+  .hub-node svg{width:26px;height:26px}
+  .hub-node.sm{width:44px;height:44px}
+  .hub-node.sm svg{width:20px;height:20px}
+  .cases-featured{grid-template-columns:1fr}
+  .perfis-grid{grid-template-columns:1fr 1fr}
+  .form-inner{grid-template-columns:1fr;gap:48px}
+  .faq-cols{grid-template-columns:1fr}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+  .nav-links{display:none}
+  .fundadores-grid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .problema-grid{grid-template-columns:1fr}
+  .perfis-grid{grid-template-columns:1fr}
+  .solucoes-tabs{flex-wrap:wrap}
+  .metodo-steps{grid-template-columns:1fr}
+  .metodo-step{border-right:none}
+  .metodo-step:nth-child(odd){border-right:none}
+  .fg-row{grid-template-columns:1fr}
+  .hero h1{font-size:48px}
+  .final-cta h2{font-size:40px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <img src="https://www.somosnura.com/hs-fs/hubfs/Logo%20Branco-1.png?width=200&height=200&name=Logo%20Branco-1.png"
+             alt="Nura AI" class="logo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="logo-fallback" style="display:none;">
+          <div class="logo-square">
+            <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="white"/><rect x="8" y="1" width="5" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="white" opacity="0.5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="#00FF87"/></svg>
+          </div>
+          Nura AI
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#solucoes">Soluções</a></li>
+        <li><a href="#metodo">Método</a></li>
+        <li><a href="#cases">Cases</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="#form" class="btn-black nav-cta">Falar com especialista</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO DARK -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker">
+          <div class="hero-kicker-line"></div>
+          <span>Do ruído à clareza</span>
+        </div>
+        <h1>Desprograme<br>o piloto<br><em>automático.</em></h1>
+        <p class="hero-sub">Nascemos da prática, não da teoria. A Nura AI surgiu dos bastidores de quem viveu o mundo corporativo e entendeu que o problema não era falta de dado. Era excesso de ruído. Transformamos a forma como empresas e líderes operam, com Inteligência Artificial aplicada e direcionada para a sua realidade.</p>
+        <div class="hero-actions">
+          <a href="#form" class="btn-white">Quero aplicar IA agora →</a>
+          <a href="#solucoes" class="btn-outline-white">Ver soluções</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-label">Por que a Nura AI existe</div>
+        <div class="hero-stat-row">
+          <div class="hero-stat-number">95%</div>
+          <div class="hero-stat-desc">dos projetos de IA falham por falta de método e estratégia de implementação</div>
+          <div class="hero-stat-badge" style="background:rgba(239,68,68,.12);color:#FF6B6B;">Fonte: MIT</div>
+        </div>
+        <div class="hero-stat-row">
+          <div class="hero-stat-number">78%</div>
+          <div class="hero-stat-desc">das empresas já utilizam IA em alguma área — mas poucas extraem valor real</div>
+          <div class="hero-stat-badge" style="background:rgba(26,26,255,.15);color:#7B9FFF;">Fonte: McKinsey</div>
+        </div>
+        <div class="hero-stat-row">
+          <div class="hero-stat-number">74%</div>
+          <div class="hero-stat-desc">do valor econômico gerado pela IA é capturado por apenas 20% das organizações</div>
+          <div class="hero-stat-badge" style="background:rgba(26,26,255,.15);color:#7B9FFF;">Fonte: McKinsey</div>
+        </div>
+        <div class="hero-stat-row">
+          <div class="hero-stat-number">7,2×</div>
+          <div class="hero-stat-desc">As empresas líderes em IA alcançam 7,2x mais receita que seus concorrentes</div>
+          <div class="hero-stat-badge" style="background:rgba(0,255,135,.1);color:#00CC6A;">Fonte: PwC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS MARQUEE -->
+<section class="clients-strip">
+  <div class="clients-top">
+    <span class="clients-label">Empresas que confiam em nós</span>
+    <div class="clients-line"></div>
+  </div>
+  <div class="marquee-outer">
+    <div class="marquee-track">
+      <!-- Set 1 -->
+      <div class="marquee-item"><img src="https://logo.clearbit.com/google.com" alt="Google" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Google</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/exame.com" alt="Exame" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Exame</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/ecorodovias.com.br" alt="Ecovias" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Ecovias</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/moodmedia.com" alt="Mood Media" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Mood:Media</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/nexxa.com.br" alt="Nexxa" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Nexxa</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/manus.im" alt="Manus" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Manus</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/inner.ai" alt="Inner AI" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Inner AI</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/meta.com" alt="Meta" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Meta</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/replit.com" alt="Replit" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Replit</span></div>
+      <!-- Set 2 (duplicate for seamless loop) -->
+      <div class="marquee-item"><img src="https://logo.clearbit.com/google.com" alt="Google" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Google</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/exame.com" alt="Exame" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Exame</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/ecorodovias.com.br" alt="Ecovias" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Ecovias</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/moodmedia.com" alt="Mood Media" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Mood:Media</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/nexxa.com.br" alt="Nexxa" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Nexxa</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/manus.im" alt="Manus" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Manus</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/inner.ai" alt="Inner AI" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Inner AI</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/meta.com" alt="Meta" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Meta</span></div>
+      <div class="marquee-item"><img src="https://logo.clearbit.com/replit.com" alt="Replit" class="marquee-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><span class="marquee-fallback">Replit</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <div class="container">
+    <div class="manifesto-grid">
+      <div class="manifesto-left">
+        <span class="overline">Nascemos da prática</span>
+        <h2>O problema não era falta de dado.<br>Era excesso de <em>ruído.</em></h2>
+        <p>Dos bastidores de quem viveu o mundo corporativo, entendemos que a maioria das empresas não falha por falta de acesso à IA. Falha por não saber como aplicar — sem método, sem prioridade, sem resultado rastreável.</p>
+        <p><strong>A Nura AI nasceu para resolver isso.</strong> Com progresso real, no ritmo certo, com quem decide o jogo todos os dias.</p>
+      </div>
+      <div class="manifesto-right">
+        <div class="manifesto-pillar">
+          <div class="pillar-num">i.</div>
+          <div class="pillar-content">
+            <strong>Nascemos da prática, não da teoria</strong>
+            <p>Cada solução vem de quem viveu operações reais, liderou times e entendeu onde IA gera impacto de verdade.</p>
+          </div>
+        </div>
+        <div class="manifesto-pillar">
+          <div class="pillar-num">ii.</div>
+          <div class="pillar-content">
+            <strong>Aplicamos IA sem ser futurista</strong>
+            <p>Progresso real, no ritmo certo, com resultados em 2 semanas de entrega e com quem decide o jogo todos os dias.</p>
+          </div>
+        </div>
+        <div class="manifesto-pillar">
+          <div class="pillar-num">iii.</div>
+          <div class="pillar-content">
+            <strong>Transformamos mentalidade e prática</strong>
+            <p>Usamos IA como meio, não como fim — para criar organizações mais inteligentes, rápidas e preparadas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÕES -->
+<section class="solucoes" id="solucoes">
+  <div class="container">
+    <div class="solucoes-header">
+      <div>
+        <span class="overline">Ecossistema Nura AI</span>
+        <h2>4 formatos.<br><em>1 objetivo:</em><br>resultado real.</h2>
+      </div>
+      <div class="solucoes-header-right">
+        <p>Cada produto foi desenhado para um momento específico da sua jornada com IA. Do primeiro contato à transformação operacional profunda — escolha o caminho certo para onde você está agora.</p>
+      </div>
+    </div>
+    <div class="solucoes-tabs">
+      <button class="solucao-tab active" onclick="showSolucao(0,this)">🎓 Educação</button>
+      <button class="solucao-tab" onclick="showSolucao(1,this)">🧠 Mentoria</button>
+      <button class="solucao-tab" onclick="showSolucao(2,this)">⚡ Imersão</button>
+      <button class="solucao-tab" onclick="showSolucao(3,this)">🔬 Consultoria</button>
+    </div>
+    <div class="solucao-panel active" id="panel-0">
+      <div class="solucao-desc">
+        <h3>Educação InCompany</h3>
+        <div class="solucao-tag-row"><span class="stag">Programa estruturado</span><span class="stag">Por área da empresa</span><span class="stag">Com certificação</span></div>
+        <p>Programas estruturados de capacitação desenhados especificamente para o contexto da empresa. Não é um curso online de prateleira — é uma trilha com teoria aplicada, laboratórios práticos e projetos reais usando os dados da organização.</p>
+        <p>Já impactamos mais de 10 mil pessoas com workshops e mentorias práticas. Nosso modelo une repertório executivo e aplicação imediata em cada módulo.</p>
+      </div>
+      <div class="solucao-details">
+        <div class="solucao-details-header">O que está incluso</div>
+        <div class="solucao-feature"><div class="sf-icon">📊</div><div class="sf-text"><strong>Diagnóstico de maturidade digital</strong><span>Assessment do time antes do início do programa</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">🗺️</div><div class="sf-text"><strong>Trilha customizada por área</strong><span>Conteúdo específico para sua liderança e seu time</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">🔧</div><div class="sf-text"><strong>Laboratórios práticos</strong><span>Ferramentas de IA ao vivo, mão na massa total</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">🏆</div><div class="sf-text"><strong>Certificação + acompanhamento</strong><span>Validação da capacitação e suporte pós-programa</span></div></div>
+      </div>
+    </div>
+    <div class="solucao-panel" id="panel-1">
+      <div class="solucao-desc">
+        <h3>Mentoria de IA</h3>
+        <div class="solucao-tag-row"><span class="stag">Individual</span><span class="stag">Sessões recorrentes</span><span class="stag">Mentor dedicado</span></div>
+        <p>Acompanhamento próximo para quem deseja transformar a carreira e a empresa com IA na prática. Com um mentor especialista dedicado, você avança com diagnóstico claro, prioridades definidas e execução monitorada.</p>
+        <p>Entregamos repertório e direcionamento para quem decide o jogo todos os dias — ensinando IA sem ser somente técnico.</p>
+      </div>
+      <div class="solucao-details">
+        <div class="solucao-details-header">O que está incluso</div>
+        <div class="solucao-feature"><div class="sf-icon">👤</div><div class="sf-text"><strong>Mentor especialista dedicado</strong><span>Mentoria direto com a Iza, foco no seu contexto específico</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">📅</div><div class="sf-text"><strong>Sessão exclusiva</strong><span>Acompanhamento durante toda a jornada</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">🗺️</div><div class="sf-text"><strong>Mapa de oportunidades de IA</strong><span>Diagnóstico completo de onde IA gera mais ROI no seu negócio</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">📈</div><div class="sf-text"><strong>Acompanhamento de indicadores</strong><span>Revisão contínua das métricas e ajuste de rota</span></div></div>
+      </div>
+    </div>
+    <div class="solucao-panel" id="panel-2">
+      <div class="solucao-desc">
+        <h3>Imersão Presencial</h3>
+        <p>O formato mais intenso e direto do ecossistema. Em um ou dois dias, nossa equipe trabalha dentro da empresa para mapear oportunidades, prototipar soluções e entregar os primeiros resultados práticos de IA no mesmo período.</p>
+        <p>Sem powerpoint teórico. Com as mãos no negócio real — e entrega de roadmap estruturado ao final do evento.</p>
+      </div>
+      <div class="solucao-details">
+        <div class="solucao-details-header">O que está incluso</div>
+        <div class="solucao-feature"><div class="sf-icon">🔍</div><div class="sf-text"><strong>Pré-imersão com diagnóstico</strong><span>Entrevistas e mapeamento antes do evento</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">⚡</div><div class="sf-text"><strong>Prototipação no dia</strong><span>Soluções criadas e testadas durante a imersão</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">🤖</div><div class="sf-text"><strong>Acesso a +50 modelos de IA</strong><span>GPT, Gemini, Claude, Perplexity e muito mais</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">🗺️</div><div class="sf-text"><strong>Roadmap de implementação</strong><span>Entregue ao fim — com prioridades e próximos passos</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">📆</div><div class="sf-text"><strong>Follow-up de 30 dias</strong><span>Acompanhamento pós-imersão para garantir a execução</span></div></div>
+      </div>
+    </div>
+    <div class="solucao-panel" id="panel-3">
+      <div class="solucao-desc">
+        <h3>Consultoria de IA</h3>
+        <div class="solucao-tag-row"><span class="stag">Projeto completo</span><span class="stag">Squad dedicado</span><span class="stag">Ponta a ponta</span></div>
+        <p>O produto de maior profundidade e impacto do ecossistema. Inclui diagnóstico completo dos processos, definição da estratégia de IA, seleção de ferramentas, implementação de Agentes de IA e acompanhamento contínuo de resultados.</p>
+        <p>Avaliamos seus fluxos de trabalho e desenhamos a arquitetura ideal — com resultados rastreáveis desde as primeiras 2 semanas de entrega.</p>
+      </div>
+      <div class="solucao-details">
+        <div class="solucao-details-header">O que está incluso</div>
+        <div class="solucao-feature"><div class="sf-icon">🔬</div><div class="sf-text"><strong>Auditoria de processos e IA</strong><span>Diagnóstico completo com priorização por ROI</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">🤖</div><div class="sf-text"><strong>Implementação de Agentes de IA</strong><span>De RH e Finanças até Vendas — automação que toma ação real</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">👥</div><div class="sf-text"><strong>Squad especialista dedicado</strong><span>Time focado exclusivamente no seu projeto</span></div></div>
+        <div class="solucao-feature"><div class="sf-icon">📊</div><div class="sf-text"><strong>KPIs e marcos de 30/60/90 dias</strong><span>Monitoramento contínuo e ajuste estratégico</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP 1 -->
+<div class="cta-strip">
+  <a href="#form" class="btn-black" style="font-size:16px;padding:18px 48px;">Quero evoluir em IA →</a>
+</div>
+
+<!-- CASES -->
+<section class="cases" id="cases">
+  <div class="container">
+    <div class="cases-header">
+      <div>
+        <span class="overline">Resultados que construímos</span>
+        <h2>Cases reais.<br>Números reais.</h2>
+      </div>
+      <p>Não trabalhamos com promessas genéricas. Cada entregável tem resultado rastreável — por isso mostramos os números.</p>
+    </div>
+    <div class="cases-featured">
+      <div class="case-card dark">
+        <div class="case-header">
+          <div class="case-logo-wrap">
+            <img src="https://logo.clearbit.com/moodmedia.com" alt="Mood Media" class="case-company-logo" onerror="this.style.display='none'">
+            <div class="case-company-block">
+              <strong>Mood:Media</strong>
+              <span>Multinacional · Agente de IA</span>
+            </div>
+          </div>
+          <div class="case-product-badge">Consultoria de IA</div>
+        </div>
+        <div class="case-number">15<span style="font-family:'Manrope',sans-serif;font-size:28px;font-weight:300;">min</span></div>
+        <div class="case-number-desc">de ganho por request · mais de 10 mil requests por mês</div>
+        <div style="display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;">
+          <div style="flex:1;min-width:140px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:14px 16px;">
+            <div style="font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;color:#fff;letter-spacing:-.03em;line-height:1;">44%</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;line-height:1.5;">de invoices abertas pagas por clientes</div>
+          </div>
+          <div style="flex:1;min-width:140px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:14px 16px;">
+            <div style="font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;color:#fff;letter-spacing:-.03em;line-height:1;">5min</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;line-height:1.5;">de resposta ao invés de 24h úteis</div>
+          </div>
+        </div>
+        <div class="case-quote-text">Saving de US$ 100k/mês em multas e reclamações de clientes com implementação de Agentes de IA.</div>
+        <div class="case-author">— Mood:Media</div>
+      </div>
+      <div class="case-card">
+        <div class="case-header">
+          <div class="case-logo-wrap">
+            <img src="https://logo.clearbit.com/ecorodovias.com.br" alt="Ecovias" class="case-company-logo" onerror="this.style.display='none'">
+            <div class="case-company-block">
+              <strong>Ecovias</strong>
+              <span>Infraestrutura · Educação InCompany</span>
+            </div>
+          </div>
+          <div class="case-product-badge">Educação InCompany</div>
+        </div>
+        <div class="case-number">10<span style="font-family:'Manrope',sans-serif;font-size:28px;font-weight:300;"> sessões</span></div>
+        <div class="case-number-desc">presenciais, 100% aplicadas à realidade da Ecovias</div>
+        <div style="margin:16px 0;padding:16px;background:var(--bg);border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;">Como reprogramamos</div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="font-size:13px;color:var(--charcoal);display:flex;gap:8px;align-items:flex-start;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">→</span>Uso direto de ferramentas de IA durante o treinamento</div>
+            <div style="font-size:13px;color:var(--charcoal);display:flex;gap:8px;align-items:flex-start;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">→</span>Exercícios construídos em cima dos fluxos reais do time</div>
+            <div style="font-size:13px;color:var(--charcoal);display:flex;gap:8px;align-items:flex-start;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">→</span>Foco em decisão, produtividade e aplicação imediata</div>
+          </div>
+        </div>
+        <div class="case-quote-text">Ampliar a cultura de AI First, mapeando o que pode ser desenvolvido com IA para ganho de produtividade e eficiência.</div>
+        <div class="case-author">— Ecovias · Ecorodovias</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP 2 -->
+<div class="cta-strip">
+  <a href="#form" class="btn-black" style="font-size:16px;padding:18px 48px;">Quero evoluir em IA →</a>
+</div>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="container">
+    <span class="overline" style="color:rgba(255,255,255,.28)">O problema que o mercado ignora</span>
+    <h2>Falar de IA virou commodity.<br><em>Aplicar com método ainda é raro.</em></h2>
+    <div class="problema-grid">
+      <div class="problema-cell"><div class="problema-icon">🔇</div><strong>Excesso de ruído</strong><p>Ferramentas, tutoriais, prompts e cursos sem fim — e nenhum resultado real no final do trimestre.</p></div>
+      <div class="problema-cell"><div class="problema-icon">🤖</div><strong>Piloto automático corporativo</strong><p>Times continuam operando no modo antigo mesmo depois de adotar IA — sem mudança de processo real.</p></div>
+      <div class="problema-cell"><div class="problema-icon">📉</div><strong>ROI invisível</strong><p>Investimentos em IA que não chegam ao P&L. Ninguém sabe dizer se funcionou — ou por quê não funcionou.</p></div>
+      <div class="problema-cell"><div class="problema-icon">⏳</div><strong>Janela fechando</strong><p>Concorrentes que agiram antes já têm vantagem operacional de meses. Cada semana de espera aumenta o gap.</p></div>
+    </div>
+    <div class="problema-cta-row">
+      <p class="problema-cta-text"><em>"O problema não é falta de IA disponível.</em> <strong>É falta de método para aplicar."</strong></p>
+      <a href="#form" class="btn-white-sm">Quero sair do ruído →</a>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTODO -->
+<section class="metodo" id="metodo">
+  <div class="container">
+    <div class="metodo-header">
+      <span class="overline">Como reprogramamos sua empresa</span>
+      <h2>Progresso real,<br>no ritmo <em>certo.</em></h2>
+      <p>Cada etapa é desenhada para gerar clareza antes de gerar complexidade. Avançamos no seu ritmo — com marcos claros, entregáveis definidos e resultado visível desde o início.</p>
+    </div>
+    <!-- AI Hub -->
+    <div class="ia-hub-wrapper">
+      <div class="ia-hub">
+        <svg class="hub-lines" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#E4E4E4" stroke-width="1.5" stroke-dasharray="4 4">
+            <line x1="210" y1="210" x2="115" y2="100"/>
+            <line x1="210" y1="210" x2="210" y2="55"/>
+            <line x1="210" y1="210" x2="305" y2="100"/>
+            <line x1="210" y1="210" x2="355" y2="185"/>
+            <line x1="210" y1="210" x2="348" y2="290"/>
+            <line x1="210" y1="210" x2="305" y2="348"/>
+            <line x1="210" y1="210" x2="210" y2="368"/>
+            <line x1="210" y1="210" x2="110" y2="348"/>
+            <line x1="210" y1="210" x2="62" y2="245"/>
+            <line x1="210" y1="210" x2="65" y2="158"/>
+          </g>
+        </svg>
+        <div class="hub-center">
+          <img src="https://www.somosnura.com/hs-fs/hubfs/Logo%20Branco-1.png?width=200&height=200&name=Logo%20Branco-1.png"
+               alt="Nura AI" class="hub-center-logo"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+          <span style="display:none;font-family:'DM Serif Display',serif;font-size:28px;font-style:italic;color:#0D0D0D;letter-spacing:-.04em;">N</span>
+        </div>
+        <!-- ChatGPT -->
+        <div class="hub-node" style="top:64px;left:79px;" title="ChatGPT">
+          <svg viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M37.532 16.87a9.963 9.963 0 0 0-.856-8.184 10.078 10.078 0 0 0-10.855-4.835A9.964 9.964 0 0 0 18.306.5a10.079 10.079 0 0 0-9.614 6.977 9.967 9.967 0 0 0-6.664 4.834 10.08 10.08 0 0 0 1.24 11.817 9.965 9.965 0 0 0 .856 8.185 10.079 10.079 0 0 0 10.855 4.835 9.965 9.965 0 0 0 7.516 3.35 10.078 10.078 0 0 0 9.617-6.981 9.967 9.967 0 0 0 6.663-4.834 10.079 10.079 0 0 0-1.243-11.813zM22.498 37.886a7.474 7.474 0 0 1-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 0 0 .655-1.134V19.054l3.366 1.944a.12.12 0 0 1 .066.092v9.299a7.505 7.505 0 0 1-7.49 7.496zM6.392 31.006a7.471 7.471 0 0 1-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 0 0 1.308 0l9.724-5.614v3.888a.12.12 0 0 1-.048.103L16.045 33.8a7.504 7.504 0 0 1-9.653-2.794zM4.297 13.62A7.469 7.469 0 0 1 8.2 10.333c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 0 0 .654 1.132l9.723 5.614-3.366 1.944a.12.12 0 0 1-.114.012L7.044 23.86a7.504 7.504 0 0 1-2.747-10.24zm27.658 6.437l-9.724-5.615 3.367-1.943a.121.121 0 0 1 .114-.012l8.048 4.648a7.498 7.498 0 0 1-1.158 13.528v-9.476a1.293 1.293 0 0 0-.647-1.13zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 0 0-1.308 0l-9.723 5.614v-3.888a.12.12 0 0 1 .048-.103l8.048-4.648a7.498 7.498 0 0 1 11.136 7.763zm-21.063 6.929l-3.367-1.944a.12.12 0 0 1-.065-.092v-9.299a7.497 7.497 0 0 1 12.293-5.756 6.94 6.94 0 0 0-.236.134l-7.965 4.6a1.294 1.294 0 0 0-.654 1.132l-.006 11.225zm1.829-3.943l4.33-2.501 4.332 2.498v4.999l-4.331 2.5-4.331-2.5V18z" fill="white"/></svg>
+        </div>
+        <!-- Perplexity -->
+        <div class="hub-node sm" style="top:18px;left:174px;" title="Perplexity">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#00E5C3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <!-- Gemini -->
+        <div class="hub-node" style="top:64px;left:270px;" title="Gemini">
+          <svg viewBox="0 0 28 28" fill="none"><path d="M14 28C14 26.0633 13.6267 24.2433 12.88 22.54C12.1567 20.8367 11.165 19.355 9.905 18.095C8.645 16.835 7.16333 15.8433 5.46 15.12C3.75667 14.3733 1.93667 14 0 14C1.93667 14 3.75667 13.6383 5.46 12.915C7.16333 12.1683 8.645 11.165 9.905 9.905C11.165 8.645 12.1567 7.16333 12.88 5.46C13.6267 3.75667 14 1.93667 14 0C14 1.93667 14.3617 3.75667 15.085 5.46C15.8317 7.16333 16.835 8.645 18.095 9.905C19.355 11.165 20.8367 12.1683 22.54 12.915C24.2433 13.6383 26.0633 14 28 14C26.0633 14 24.2433 14.3733 22.54 15.12C20.8367 15.8433 19.355 16.835 18.095 18.095C16.835 19.355 15.8317 20.8367 15.085 22.54C14.3617 24.2433 14 26.0633 14 28Z" fill="url(#gg)"/><defs><linearGradient id="gg" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#4285F4"/><stop offset="1" stop-color="#9B72CB"/></linearGradient></defs></svg>
+        </div>
+        <!-- Google -->
+        <div class="hub-node" style="top:148px;left:320px;" title="Google AI">
+          <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        </div>
+        <!-- Claude -->
+        <div class="hub-node" style="top:254px;left:312px;" title="Claude">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M16.245 5C10.043 5 5 10.043 5 16.245S10.043 27.49 16.245 27.49 27.49 22.447 27.49 16.245 22.447 5 16.245 5zm4.104 16.492c-.23.14-.528.07-.67-.16l-3.434-5.604-3.434 5.604c-.14.23-.44.3-.67.16-.23-.14-.3-.44-.16-.67l3.672-5.992-3.672-5.994c-.14-.23-.07-.528.16-.67.23-.14.528-.07.67.16l3.434 5.604 3.434-5.604c.14-.23.44-.3.67-.16.23.14.3.44.16.67l-3.672 5.994 3.672 5.992c.14.23.07.528-.16.67z" fill="#C97B4B"/></svg>
+        </div>
+        <!-- Meta -->
+        <div class="hub-node sm" style="top:312px;left:268px;" title="Meta AI">
+          <svg viewBox="0 0 24 24"><path d="M6.135 10.124c.48-.944 1.074-1.854 1.782-2.622.504-.544.983-.823 1.395-.823.637 0 1.246.543 1.8 1.545.394.707.762 1.589 1.104 2.629l-1.01.536c-.31-.926-.634-1.698-.958-2.274-.37-.657-.72-.978-1.022-.978-.276 0-.603.258-.96.76-.464.644-.92 1.566-1.3 2.64L6.135 10.124zm11.594 0-.832 1.413c-.38-1.074-.836-1.996-1.3-2.64-.357-.502-.684-.76-.96-.76-.302 0-.653.321-1.022.978-.324.576-.648 1.348-.958 2.274l-1.01-.536c.342-1.04.71-1.922 1.104-2.629.554-1.002 1.163-1.545 1.8-1.545.412 0 .891.279 1.395.823.708.768 1.302 1.678 1.783 2.622zM12 7.682c1.188 1.8 2.126 4.106 2.64 6.736.102.52.182 1.05.24 1.582H9.12c.058-.532.138-1.062.24-1.582C9.874 11.788 10.812 9.482 12 7.682zm0-1.682C10.338 8.084 9.12 11.016 8.46 14.418c-.133.69-.222 1.39-.27 2.082h7.62c-.048-.692-.137-1.393-.27-2.082C14.88 11.016 13.662 8.084 12 6z" fill="#0082FB"/></svg>
+        </div>
+        <!-- Microsoft -->
+        <div class="hub-node sm" style="top:330px;left:174px;" title="Microsoft Copilot">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M11.4 2.4C6.48 2.4 2.4 6.48 2.4 11.4H11.4V2.4Z" fill="#F25022"/><path d="M21.6 2.4H12.6V11.4H21.6V2.4Z" fill="#7FBA00"/><path d="M2.4 12.6V21.6H11.4V12.6H2.4Z" fill="#00A4EF"/><path d="M12.6 12.6V21.6H21.6V12.6H12.6Z" fill="#FFB900"/></svg>
+        </div>
+        <!-- Grok -->
+        <div class="hub-node sm" style="top:312px;left:84px;" title="Grok">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M13.485 11.93 20.61 3h-2.06l-6.19 7.2L6.89 3H1l7.49 10.9L1 21.98h2.06l6.55-7.62 5.23 7.62H21l-7.515-10.05zm-2.32 2.7-.76-1.09-6.03-8.62h2.6l4.87 6.97.76 1.09 6.33 9.06h-2.6l-5.17-7.41z"/></svg>
+        </div>
+        <!-- Notion -->
+        <div class="hub-node sm" style="top:208px;left:26px;" title="Notion AI">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.934zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933z"/></svg>
+        </div>
+        <!-- Midjourney -->
+        <div class="hub-node sm" style="top:122px;left:30px;" title="Midjourney">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M11.998 1.96C6.45 1.96 1.96 6.45 1.96 12c0 5.548 4.49 10.04 10.038 10.04S22.04 17.548 22.04 12c0-5.55-4.492-10.04-10.042-10.04zm.002 3.5c1.84 0 3.318 1.477 3.318 3.318s-1.478 3.316-3.318 3.316c-1.839 0-3.316-1.476-3.316-3.316S10.161 5.46 12 5.46zm0 13.5a7.5 7.5 0 0 1-5.995-3 9.375 9.375 0 0 1 11.99 0A7.5 7.5 0 0 1 12 18.96z"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="metodo-steps">
+      <div class="metodo-step"><div class="step-num">i.</div><div class="step-icon-box">🔍</div><div class="step-title">Diagnóstico</div><div class="step-desc">Mapeamos sua operação, seus processos e onde IA gera mais retorno. Sem suposições — com dados do seu negócio.</div></div>
+      <div class="metodo-step"><div class="step-num">ii.</div><div class="step-icon-box">🗺️</div><div class="step-title">Estratégia</div><div class="step-desc">Desenhamos a arquitetura ideal de IA para a empresa — com priorização por ROI e sequência lógica de implementação.</div></div>
+      <div class="metodo-step"><div class="step-num">iii.</div><div class="step-icon-box">⚙️</div><div class="step-title">Execução</div><div class="step-desc">Implementamos as soluções com o time — seja capacitação, Agentes de IA, automações ou mudança de processos.</div></div>
+      <div class="metodo-step"><div class="step-num">iv.</div><div class="step-icon-box">📈</div><div class="step-title">Resultado</div><div class="step-desc">Medimos, ajustamos e evoluímos. Entrega em 2 semanas. Resultado rastreável. Aprendizado que permanece na empresa.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP 3 -->
+<div class="cta-strip on-bg">
+  <a href="#form" class="btn-black" style="font-size:16px;padding:18px 48px;">Quero evoluir em IA →</a>
+</div>
+
+<!-- PARA QUEM -->
+<section class="para-quem">
+  <div class="container">
+    <div class="para-quem-header">
+      <span class="overline">Para quem é a Nura AI</span>
+      <h2>Feito para quem<br>decide o jogo.</h2>
+      <p>Não atendemos a todos — atendemos quem tem compromisso com resultado real e entende que IA não é mágica, é método.</p>
+    </div>
+    <div class="perfis-grid">
+      <div class="perfil-card"><div class="perfil-icon">🏢</div><strong>CEOs e Fundadores</strong><p>Que querem usar IA para ganhar vantagem competitiva real — não só aparecer em palco falando sobre o tema.</p></div>
+      <div class="perfil-card"><div class="perfil-icon">📊</div><strong>Diretores e Gestores</strong><p>Que precisam transformar processos e times sem travar a operação — com método, velocidade e resultado rastreável.</p></div>
+      <div class="perfil-card"><div class="perfil-icon">🎓</div><strong>Times inteiros</strong><p>Que precisam ser capacitados com profundidade — não com treinamentos genéricos de prateleira.</p></div>
+    </div>
+    <div class="para-quem-nao">
+      <div class="para-quem-nao-label">Não é pra você se</div>
+      <div class="pqn-items">
+        <span class="pqn-item">Quer resultados sem engajamento interno</span>
+        <span class="pqn-item">Busca apenas um curso online barato</span>
+        <span class="pqn-item">Não tem disposição para mudar processos</span>
+        <span class="pqn-item">Quer automação sem estratégia</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="form-section" id="form">
+  <div class="container">
+    <div class="form-inner">
+      <div class="form-left-dark">
+        <span class="overline" style="color:rgba(255,255,255,.28)">Próximo passo</span>
+        <h2>Vamos desprogramar<br>o seu <em>negócio?</em></h2>
+        <p>Preencha o formulário e nossa equipe entra em contato para entender seu contexto e apresentar a solução certa — sem compromisso de contratação.</p>
+        <div class="form-proof-box">
+          <span class="label">Resultado em 2 semanas</span>
+          <p>Não fazemos promessas de longo prazo sem evidência. Nossas entregas têm marcos claros e resultados rastreáveis desde o início do projeto.</p>
+        </div>
+      </div>
+      <div class="form-right-dark">
+        <div id="formWrap">
+          <h3>Falar com um especialista</h3>
+          <p class="form-sub">Preencha abaixo — resposta em até 24h úteis</p>
+          <div class="fg-row">
+            <div class="fg"><label>Nome *</label><input type="text" id="v2-nome" placeholder="Seu nome"></div>
+            <div class="fg"><label>Cargo</label><input type="text" id="v2-cargo" placeholder="CEO, Diretor..."></div>
+          </div>
+          <div class="fg"><label>E-mail corporativo *</label><input type="email" id="v2-email" placeholder="voce@empresa.com"></div>
+          <div class="fg"><label>Empresa *</label><input type="text" id="v2-empresa" placeholder="Nome da empresa"></div>
+          <div class="fg">
+            <label>Qual solução te interessa?</label>
+            <select id="v2-produto">
+              <option value="">Selecione uma opção</option>
+              <option>Educação InCompany</option>
+              <option>Mentoria de IA</option>
+              <option>Imersão Presencial</option>
+              <option>Consultoria de IA / Agentes</option>
+              <option>Ainda não sei — quero orientação</option>
+            </select>
+          </div>
+          <div class="fg"><label>Desafio atual (opcional)</label><textarea id="v2-contexto" placeholder="Descreva o principal desafio que sua empresa enfrenta com IA..."></textarea></div>
+          <button class="form-submit-dark" onclick="submitV2()">Quero falar com um especialista →</button>
+          <p class="form-footnote">🔒 Sem spam. Seus dados ficam seguros com a Nura AI.</p>
+        </div>
+        <div class="form-success-dark" id="successWrap">
+          <div class="fsd-check">✅</div>
+          <h3>Recebemos tudo!</h3>
+          <p>Nossa equipe vai analisar seu contexto e entrar em contato em até <strong>24 horas úteis</strong> para agendar uma conversa com um especialista.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNDADORES -->
+<section class="fundadores">
+  <div class="container">
+    <div class="fundadores-header">
+      <span class="overline">Quem está por trás da Nura AI</span>
+      <h2>Os <em>fundadores</em></h2>
+      <p>Construído por quem viveu o mercado por dentro — não por consultores de slide.</p>
+    </div>
+    <div class="fundadores-grid">
+      <div class="fundador-card">
+        <div class="fundador-top">
+          <div class="fundador-foto" style="background:linear-gradient(135deg,#1A1AFF,#00CC6A);">I</div>
+          <div class="fundador-id">
+            <div class="fundador-nome">Izabela Anholett</div>
+            <div class="fundador-cargo">Co-fundadora & CEO</div>
+            <div class="fundador-badges">
+              <span class="fundador-badge gold">🏆 Top Voice #1 IA no Brasil</span>
+              <span class="fundador-badge green">✦ +100K alunos formados</span>
+              <span class="fundador-badge blue">📐 Metodologia validada</span>
+            </div>
+          </div>
+        </div>
+        <div class="fundador-bottom">
+          <p class="fundador-bio">Referência nacional em Inteligência Artificial aplicada ao mundo corporativo. Izabela construiu sua trajetória na interseção entre tecnologia, liderança e educação executiva — formando mais de 100 mil profissionais e líderes em IA no Brasil. É reconhecida pelo LinkedIn como a Top Voice #1 de IA no país.</p>
+          <div class="fundador-empresas-label">Trajetória</div>
+          <div class="fundador-empresas">
+            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Nura AI</strong><span>Co-fundadora e CEO — ecossistema de IA aplicada para empresas e líderes</span></div></div>
+            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Educação Executiva em IA</strong><span>+100K profissionais capacitados em programas práticos de Inteligência Artificial</span></div></div>
+            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Consultoria Estratégica</strong><span>Projetos de transformação digital e implementação de IA em grandes organizações</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="fundador-card">
+        <div class="fundador-top">
+          <div class="fundador-foto" style="background:linear-gradient(135deg,#2E2E2E,#6B6B6B);">A</div>
+          <div class="fundador-id">
+            <div class="fundador-nome">Alberto Azevedo</div>
+            <div class="fundador-cargo">Co-fundador & COO</div>
+            <div class="fundador-badges">
+              <span class="fundador-badge blue">⚙️ Estratégia & Operações</span>
+              <span class="fundador-badge green">✦ Gestão de alto crescimento</span>
+            </div>
+          </div>
+        </div>
+        <div class="fundador-bottom">
+          <p class="fundador-bio">Executivo com trajetória sólida em operações, estratégia e crescimento de negócios. Alberto traz para a Nura AI a visão de quem construiu e escalou estruturas complexas — traduzindo o potencial da Inteligência Artificial em processos que funcionam no mundo real, com método e resultado mensurável.</p>
+          <div class="fundador-empresas-label">Trajetória</div>
+          <div class="fundador-empresas">
+            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Nura AI</strong><span>Co-fundador e COO — estrutura operacional e crescimento do ecossistema</span></div></div>
+            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Gestão Executiva</strong><span>Liderança de operações e times em empresas de diferentes setores e portes</span></div></div>
+            <div class="empresa-item"><div class="empresa-dot"></div><div><strong>Estratégia & Growth</strong><span>Projetos de estruturação comercial, escala e transformação organizacional</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="faq-header">
+      <span class="overline">Dúvidas frequentes</span>
+      <h2>Perguntas que<br>todo mundo faz.</h2>
+    </div>
+    <div class="faq-cols">
+      <div>
+        <div class="faq-item open">
+          <button class="faq-q" onclick="toggleFaq(this)">Preciso ter conhecimento técnico para contratar?<span class="faq-q-icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Não. A Nura AI trabalha com líderes de diferentes níveis de maturidade digital. Começamos com diagnóstico do seu contexto e adaptamos linguagem, profundidade e metodologia para onde você está — não onde gostaríamos que você estivesse.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Em quanto tempo vejo os primeiros resultados?<span class="faq-q-icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Nossas entregas têm resultados rastreáveis desde as primeiras 2 semanas. Em Imersão, protótipos saem no mesmo dia. Em Consultoria, estabelecemos marcos de 30, 60 e 90 dias com KPIs mensuráveis. Em Educação InCompany, impacto prático começa na segunda semana.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Os resultados são garantidos?<span class="faq-q-icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Fazemos diagnóstico antes de fechar qualquer projeto. Se não enxergarmos potencial real de impacto, dizemos antes do contrato. Nosso modelo é orientado a entrega — e nosso histórico de cases reflete isso.</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Atendem empresas de qualquer porte?<span class="faq-q-icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Depende do produto. Educação e Mentoria são indicadas para times ou líderes individuais. Consultoria e Agentes de IA têm melhor ROI em empresas com processos estabelecidos e acima de 20 colaboradores.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Como escolho o produto certo para o meu momento?<span class="faq-q-icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Esse é exatamente o papel da conversa inicial com nosso time. Após entender seu objetivo e seu contexto, indicamos o produto — ou a combinação — do ecossistema que gera mais retorno. Não forçamos nenhuma solução; recomendamos o que faz sentido para você.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Atendem fora de São Paulo?<span class="faq-q-icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Sim. Atendemos empresas em todo o Brasil. Imersões são realizadas presencialmente em qualquer estado, na sede da empresa cliente ou em espaços parceiros em capitais. Educação, Mentoria e Consultoria podem ser remotas ou híbridas.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="container">
+    <span class="overline" style="color:rgba(255,255,255,.28)">Sem enrolação</span>
+    <h2>Abandone o piloto<br><em>automático</em><br>agora.</h2>
+    <p>Uma conversa com nosso time é suficiente para entender onde IA gera mais resultado no seu negócio. Sem compromisso. Com profundidade.</p>
+    <div class="final-actions">
+      <a href="#form" class="btn-white">Falar com um especialista →</a>
+      <a href="#solucoes" class="btn-outline-white">Ver todas as soluções</a>
+    </div>
+    <p class="final-note">Resposta em até 24h úteis · Sem compromisso</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <a href="#" class="logo">
+        <img src="https://www.somosnura.com/hs-fs/hubfs/Logo%20Branco-1.png?width=200&height=200&name=Logo%20Branco-1.png"
+             alt="Nura AI" class="logo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="logo-fallback" style="display:none;">
+          <div class="logo-square"><svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="white"/><rect x="8" y="1" width="5" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="white" opacity="0.5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="#00FF87"/></svg></div>
+          Nura AI
+        </div>
+      </a>
+      <p class="footer-copy">© 2026 Nura AI · somosnura.com · Todos os direitos reservados.</p>
+      <ul class="footer-links">
+        <li><a href="#">Privacidade</a></li>
+        <li><a href="#">Termos</a></li>
+        <li><a href="https://www.linkedin.com/company/nuraaiglobal/" target="_blank">LinkedIn</a></li>
+        <li><a href="#form">Contato</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+function showSolucao(i,btn){
+  document.querySelectorAll('.solucao-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.solucao-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+i).classList.add('active');
+}
+function toggleFaq(btn){
+  btn.parentElement.classList.toggle('open');
+}
+function submitV2(){
+  const nome=document.getElementById('v2-nome').value.trim();
+  const email=document.getElementById('v2-email').value.trim();
+  if(!nome||!email){alert('Por favor, preencha nome e e-mail.');return;}
+  if(!email.includes('@')||!email.includes('.')){alert('E-mail inválido.');return;}
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('successWrap').style.display='block';
+}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';}
+  });
+},{threshold:.08});
+document.querySelectorAll('.case-card,.perfil-card,.metodo-step,.manifesto-pillar,.fundador-card').forEach(el=>{
+  el.style.opacity='0';
+  el.style.transform='translateY(16px)';
+  el.style.transition='opacity .45s ease,transform .45s ease';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
