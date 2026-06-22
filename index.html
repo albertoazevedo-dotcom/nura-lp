@@ -747,13 +747,35 @@ function showSolucao(i,btn){
 function toggleFaq(btn){
   btn.parentElement.classList.toggle('open');
 }
-function submitV2(){
+async function submitV2(){
   const nome=document.getElementById('v2-nome').value.trim();
   const email=document.getElementById('v2-email').value.trim();
+  const cargo=document.getElementById('v2-cargo').value.trim();
+  const empresa=document.getElementById('v2-empresa').value.trim();
+  const produto=document.getElementById('v2-produto').value;
+  const contexto=document.getElementById('v2-contexto').value.trim();
   if(!nome||!email){alert('Por favor, preencha nome e e-mail.');return;}
   if(!email.includes('@')||!email.includes('.')){alert('E-mail inválido.');return;}
-  document.getElementById('formWrap').style.display='none';
-  document.getElementById('successWrap').style.display='block';
+
+  const btn=document.querySelector('.form-submit');
+  btn.disabled=true;
+  btn.textContent='Enviando...';
+
+  try{
+    const res=await fetch('/api/contact',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nome,email,cargo,empresa,produto,contexto})
+    });
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'Erro ao enviar');
+    document.getElementById('formWrap').style.display='none';
+    document.getElementById('successWrap').style.display='block';
+  }catch(err){
+    btn.disabled=false;
+    btn.textContent='Falar com um especialista →';
+    alert('Erro ao enviar: '+err.message+'\nTente novamente.');
+  }
 }
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
