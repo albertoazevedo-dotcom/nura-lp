@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { nome, email, cargo, empresa, faturamento, produtos, contexto } = req.body;
+  const { nome, email, cargo, telefone, empresa, faturamento, produtos, contexto } = req.body;
   if (!nome || !email) return res.status(400).json({ error: 'Nome e e-mail são obrigatórios' });
 
   const SHEETS_URL   = process.env.SHEETS_URL || 'https://script.google.com/a/macros/somosnura.com/s/AKfycbw5frK8IoEIwKXf7Knqn9UwNF7-qkDyl8mCbom723SlucDTpHelx-0l6nxNO6iaJl4g/exec';
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   // Apps Script faz redirect 302 no POST — precisamos seguir manualmente
   if (SHEETS_URL) {
     try {
-      const payload = JSON.stringify({ nome, email, cargo, empresa, faturamento, produtos, contexto });
+      const payload = JSON.stringify({ nome, email, cargo, telefone, empresa, faturamento, produtos, contexto });
       const postOpts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload };
 
       // Apps Script executa doPost ANTES de redirecionar (302 = sucesso, script já rodou)
