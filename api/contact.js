@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const { nome, email, cargo, empresa, faturamento, produtos, contexto } = req.body;
   if (!nome || !email) return res.status(400).json({ error: 'Nome e e-mail são obrigatórios' });
 
-  const SHEETS_URL   = process.env.SHEETS_URL;   // URL do Apps Script (webhook)
+  const SHEETS_URL   = process.env.SHEETS_URL || 'https://script.google.com/macros/s/AKfycbzF9gv-FrMJAfA_OgOPIIjXS2C4FbyvNDk7WzkAi19oKfrW_JIbOx-w_RpkqiED3tp9/exec';
   const PORTAL_ID    = '50947681';
   const FORM_GUID    = 'a1d952ec-0932-4988-9e54-f091d751ce44';
 
