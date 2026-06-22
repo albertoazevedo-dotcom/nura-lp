@@ -16,20 +16,25 @@ export default async function handler(req, res) {
   const firstname = nomeParts[0];
   const lastname  = nomeParts.slice(1).join(' ') || '';
 
-  // objectTypeId: "0-1" = contact property, "0-2" = company property
+  // Monta o campo message com todas as infos extras para garantir que chegam
+  const messageLines = [];
+  if (faturamento) messageLines.push(`Faturamento anual: ${faturamento}`);
+  if (contexto)    messageLines.push(contexto);
+  const messageValue = messageLines.join('\n\n');
+
+  // Apenas propriedades de contato (0-1) — sem objectTypeId para máxima compatibilidade
   const fields = [
-    { objectTypeId: '0-1', name: 'firstname', value: firstname },
-    { objectTypeId: '0-1', name: 'lastname',  value: lastname  },
-    { objectTypeId: '0-1', name: 'email',     value: email     },
+    { name: 'firstname', value: firstname },
+    { name: 'lastname',  value: lastname  },
+    { name: 'email',     value: email     },
   ];
-  if (cargo)       fields.push({ objectTypeId: '0-1', name: 'jobtitle', value: cargo });
-  if (empresa)     fields.push({ objectTypeId: '0-1', name: 'company',  value: empresa });
-  if (faturamento) fields.push({ objectTypeId: '0-2', name: 'faturamento_anual', value: faturamento });
+  if (cargo)                fields.push({ name: 'jobtitle', value: cargo });
+  if (empresa)              fields.push({ name: 'company',  value: empresa });
+  if (messageValue)         fields.push({ name: 'message',  value: messageValue });
   if (produtos && produtos.length > 0) {
     const val = Array.isArray(produtos) ? produtos.join(';') : produtos;
-    fields.push({ objectTypeId: '0-1', name: 'produto_de_interesse', value: val });
+    fields.push({ name: 'produto_de_interesse', value: val });
   }
-  if (contexto)    fields.push({ objectTypeId: '0-1', name: 'message', value: contexto });
 
   try {
     const hsRes = await fetch(
@@ -41,7 +46,7 @@ export default async function handler(req, res) {
           submittedAt: Date.now().toString(),
           fields,
           context: {
-            pageUri:  'https://somosnura.com',
+            pageUri:  'https://nura-lp-theta.vercel.app',
             pageName: 'Nura AI — A inteligência que transforma o seu negócio',
           },
         }),
@@ -51,7 +56,6 @@ export default async function handler(req, res) {
     const body = await hsRes.json();
 
     if (!hsRes.ok) {
-      // Return the full HubSpot error so we can debug
       console.error('HubSpot error:', JSON.stringify(body));
       return res.status(400).json({
         error: body.message || 'HubSpot error',
