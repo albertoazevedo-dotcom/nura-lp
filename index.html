@@ -186,6 +186,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(240,237,228,.96);backdrop-
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue)}
 .fg textarea{resize:vertical;min-height:110px}
 .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.checkbox-group{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.checkbox-item{display:flex;align-items:center;gap:10px;background:var(--white);border:1.5px solid var(--border);border-radius:6px;padding:12px 14px;cursor:pointer;font-size:14px;font-weight:600;color:var(--navy);transition:border-color .2s,background .2s}
+.checkbox-item:hover{border-color:var(--blue)}
+.checkbox-item input[type="checkbox"]{width:16px;height:16px;accent-color:var(--blue);cursor:pointer;flex-shrink:0}
+.checkbox-item:has(input:checked){border-color:var(--blue);background:#EEF1FD}
 .form-submit{width:100%;background:var(--blue);color:#fff;font-family:'Manrope',sans-serif;font-size:16px;font-weight:700;padding:18px;border:none;border-radius:4px;cursor:pointer;transition:background .2s;letter-spacing:-.01em;margin-top:8px}
 .form-submit:hover{background:var(--blue-d)}
 .form-footnote{font-size:12px;color:var(--light);text-align:center;margin-top:12px}
@@ -632,25 +637,35 @@ footer{padding:36px 0;border-top:1px solid var(--border);background:var(--cream)
         <h2>Falar com um<br><em>especialista</em></h2>
         <p class="form-sub">Preencha abaixo e entraremos em contato o mais rápido possível para entender seu contexto e apresentar a solução certa.</p>
         <div class="fg-row">
-          <div class="fg"><label>Nome *</label><input type="text" id="v2-nome" placeholder="Seu nome completo"></div>
+          <div class="fg"><label>Nome completo *</label><input type="text" id="v2-nome" placeholder="Seu nome completo"></div>
           <div class="fg"><label>E-mail corporativo *</label><input type="email" id="v2-email" placeholder="voce@empresa.com"></div>
         </div>
         <div class="fg-row">
           <div class="fg"><label>Cargo</label><input type="text" id="v2-cargo" placeholder="CEO, Diretor, Gerente..."></div>
-          <div class="fg"><label>Empresa *</label><input type="text" id="v2-empresa" placeholder="Nome da empresa"></div>
+          <div class="fg"><label>Empresa</label><input type="text" id="v2-empresa" placeholder="Nome da empresa"></div>
+        </div>
+        <div class="fg">
+          <label>Faturamento Anual *</label>
+          <select id="v2-faturamento" required>
+            <option value="">Selecione uma faixa</option>
+            <option value="Não tenho faturamento">Não tenho faturamento</option>
+            <option value="Até 100 mil">Até R$ 100 mil</option>
+            <option value="De 101 mil a 500 mil">De R$ 101 mil a R$ 1 milhão</option>
+            <option value="De 501 mil a 1 Milhão">De R$ 1 milhão a R$ 5 milhões</option>
+            <option value="Acima de 1 Milhão">De R$ 5 milhões a R$ 20 milhões</option>
+            <option value="Acima de 20 milhões">Acima de R$ 20 milhões</option>
+          </select>
         </div>
         <div class="fg">
           <label>Qual solução te interessa?</label>
-          <select id="v2-produto">
-            <option value="">Selecione uma opção</option>
-            <option>Educação InCompany</option>
-            <option>Mentoria de IA</option>
-            <option>Imersão Presencial</option>
-            <option>Consultoria de IA / Agentes</option>
-            <option>Ainda não sei — quero orientação</option>
-          </select>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="produto" value="Nu4FRF-NTWhgAoyrq96ij"> Mentoria</label>
+            <label class="checkbox-item"><input type="checkbox" name="produto" value="11oJ-VVNrvpy9rxsmMTnB"> Imersão</label>
+            <label class="checkbox-item"><input type="checkbox" name="produto" value="a1MnuRhbj_Cg98BFtuazb"> Programa InCompany</label>
+            <label class="checkbox-item"><input type="checkbox" name="produto" value="BryOlmCS0j9py_zscIs9e"> Consultoria</label>
+          </div>
         </div>
-        <div class="fg"><label>Desafio atual (opcional)</label><textarea id="v2-contexto" placeholder="Descreva o principal desafio que sua empresa enfrenta com IA..."></textarea></div>
+        <div class="fg"><label>Conte sobre seu desafio com IA (opcional)</label><textarea id="v2-contexto" placeholder="Descreva o principal desafio que sua empresa enfrenta com IA..."></textarea></div>
         <button class="form-submit" onclick="submitV2()">Falar com um especialista →</button>
         <p class="form-footnote">🔒 Sem spam. Seus dados ficam seguros com a Nura AI.</p>
       </div>
@@ -752,10 +767,12 @@ async function submitV2(){
   const email=document.getElementById('v2-email').value.trim();
   const cargo=document.getElementById('v2-cargo').value.trim();
   const empresa=document.getElementById('v2-empresa').value.trim();
-  const produto=document.getElementById('v2-produto').value;
+  const faturamento=document.getElementById('v2-faturamento').value;
   const contexto=document.getElementById('v2-contexto').value.trim();
+  const produtos=Array.from(document.querySelectorAll('input[name="produto"]:checked')).map(cb=>cb.value);
   if(!nome||!email){alert('Por favor, preencha nome e e-mail.');return;}
   if(!email.includes('@')||!email.includes('.')){alert('E-mail inválido.');return;}
+  if(!faturamento){alert('Por favor, selecione o faturamento anual.');return;}
 
   const btn=document.querySelector('.form-submit');
   btn.disabled=true;
@@ -765,7 +782,7 @@ async function submitV2(){
     const res=await fetch('/api/contact',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({nome,email,cargo,empresa,produto,contexto})
+      body:JSON.stringify({nome,email,cargo,empresa,faturamento,produtos,contexto})
     });
     const data=await res.json();
     if(!res.ok) throw new Error(data.error||'Erro ao enviar');
