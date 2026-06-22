@@ -16,19 +16,20 @@ export default async function handler(req, res) {
   const firstname = nomeParts[0];
   const lastname  = nomeParts.slice(1).join(' ') || '';
 
+  // objectTypeId: "0-1" = contact property, "0-2" = company property
   const fields = [
-    { name: 'firstname', value: firstname },
-    { name: 'lastname',  value: lastname  },
-    { name: 'email',     value: email     },
+    { objectTypeId: '0-1', name: 'firstname', value: firstname },
+    { objectTypeId: '0-1', name: 'lastname',  value: lastname  },
+    { objectTypeId: '0-1', name: 'email',     value: email     },
   ];
-  if (cargo)      fields.push({ name: 'jobtitle', value: cargo });
-  if (empresa)    fields.push({ name: 'company',  value: empresa });
-  if (faturamento) fields.push({ name: 'faturamento_anual', value: faturamento });
+  if (cargo)       fields.push({ objectTypeId: '0-1', name: 'jobtitle', value: cargo });
+  if (empresa)     fields.push({ objectTypeId: '0-1', name: 'company',  value: empresa });
+  if (faturamento) fields.push({ objectTypeId: '0-2', name: 'faturamento_anual', value: faturamento });
   if (produtos && produtos.length > 0) {
     const val = Array.isArray(produtos) ? produtos.join(';') : produtos;
-    fields.push({ name: 'produto_de_interesse', value: val });
+    fields.push({ objectTypeId: '0-1', name: 'produto_de_interesse', value: val });
   }
-  if (contexto)   fields.push({ name: 'message', value: contexto });
+  if (contexto)    fields.push({ objectTypeId: '0-1', name: 'message', value: contexto });
 
   try {
     const hsRes = await fetch(
@@ -37,6 +38,7 @@ export default async function handler(req, res) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          submittedAt: Date.now().toString(),
           fields,
           context: {
             pageUri:  'https://somosnura.com',
@@ -46,15 +48,21 @@ export default async function handler(req, res) {
       }
     );
 
+    const body = await hsRes.json();
+
     if (!hsRes.ok) {
-      const err = await hsRes.json();
-      throw new Error(err.message || JSON.stringify(err));
+      // Return the full HubSpot error so we can debug
+      console.error('HubSpot error:', JSON.stringify(body));
+      return res.status(400).json({
+        error: body.message || 'HubSpot error',
+        details: body.errors || body,
+      });
     }
 
     return res.status(200).json({ success: true });
 
   } catch (err) {
-    console.error('HubSpot error:', err);
+    console.error('Server error:', err);
     return res.status(500).json({ error: err.message });
   }
 }
