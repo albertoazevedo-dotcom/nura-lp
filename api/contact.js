@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const { nome, email, cargo, telefone, empresa, faturamento, produtos, contexto } = req.body;
   if (!nome || !email) return res.status(400).json({ error: 'Nome e e-mail são obrigatórios' });
 
-  const SHEETS_URL   = process.env.SHEETS_URL || 'https://script.google.com/a/macros/somosnura.com/s/AKfycbw5frK8IoEIwKXf7Knqn9UwNF7-qkDyl8mCbom723SlucDTpHelx-0l6nxNO6iaJl4g/exec';
+  const SHEETS_URL   = process.env.SHEETS_URL || 'https://script.google.com/macros/s/AKfycbw5frK8IoEIwKXf7Knqn9UwNF7-qkDyl8mCbom723SlucDTpHelx-0l6nxNO6iaJl4g/exec';
   const PORTAL_ID    = '50947681';
   const FORM_GUID    = 'a1d952ec-0932-4988-9e54-f091d751ce44';
 
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         console.error('Sheets POST error, status:', sRes.status);
         // Fallback GET com params na URL
         const params = new URLSearchParams({
-          nome, email, cargo: cargo||'', empresa: empresa||'',
+          nome, email, cargo: cargo||'', telefone: telefone||'', empresa: empresa||'',
           faturamento: faturamento||'',
           produtos: Array.isArray(produtos) ? produtos.join(';') : (produtos||''),
           contexto: contexto||''
