@@ -257,12 +257,39 @@ footer{padding:36px 0;border-top:1px solid var(--border);background:var(--cream)
   .solucoes-tabs{flex-wrap:wrap}
   .fg-row{grid-template-columns:1fr}
   .checkbox-group{grid-template-columns:1fr}
-  .hero h1{font-size:44px}
-  .final-cta h2{font-size:40px}
+  .hero h1{font-size:40px}
+  .hero-sub{font-size:16px}
+  .final-cta h2{font-size:36px}
+  .final-cta p{font-size:16px}
   /* Marquee ainda mais rápido em telas pequenas */
   .marquee-track{animation-duration:16s}
   .marquee-item{padding:0 24px}
   .marquee-logo{height:28px;max-width:110px}
+  /* Stats: empilha em coluna única */
+  .stats-grid{grid-template-columns:1fr!important}
+  .stats-grid > div{border-right:none!important;border-bottom:1px solid var(--border)}
+  .stats-grid > div:last-child{border-bottom:none}
+  /* Cases: padding menor */
+  .case-card{padding:22px}
+  .case-number{font-size:44px}
+  /* Fundadores: foto menor */
+  .fundador-photo-wrap{height:280px}
+  .fn-first,.fn-last{font-size:28px}
+  /* Container: menos padding lateral */
+  .container{padding:0 18px}
+  /* Seções: menos padding vertical */
+  .manifesto,.solucoes,.cases,.fundadores,.form-section,.faq{padding:48px 0}
+  /* Problema: padding menor */
+  .problema{padding:48px 0}
+  .problema-cell{padding:22px 16px}
+  /* Soluções tabs: botão full-width */
+  .solucao-tab{min-width:calc(50% - 5px);font-size:12px;padding:12px 8px}
+  /* Cases header: empilha */
+  .cases-header{flex-direction:column;gap:12px}
+  .cases-header p{text-align:left;max-width:100%}
+  /* Botões hero: empilha */
+  .hero-actions{flex-direction:column;align-items:stretch;padding:0 8px}
+  .btn-blue,.btn-outline,.btn-navy,.btn-white{justify-content:center}
 }
 </style>
 </head>
@@ -375,7 +402,7 @@ footer{padding:36px 0;border-top:1px solid var(--border);background:var(--cream)
       </div>
     </div>
     <!-- STATS ROW -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:56px;border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+    <div class="stats-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:56px;border:1px solid var(--border);border-radius:8px;overflow:hidden;">
       <div style="padding:28px 28px 26px;border-right:1px solid var(--border);">
         <div style="font-family:'Manrope',sans-serif;font-size:52px;font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--navy);margin-bottom:8px;">95%</div>
         <div style="font-size:13px;line-height:1.6;color:var(--mid);margin-bottom:12px;">dos projetos de IA falham por falta de método e estratégia de implementação</div>
@@ -658,8 +685,9 @@ footer{padding:36px 0;border-top:1px solid var(--border);background:var(--cream)
         </div>
         <div class="fg-row">
           <div class="fg"><label>Cargo</label><input type="text" id="v2-cargo" placeholder="CEO, Diretor, Gerente..."></div>
-          <div class="fg"><label>Empresa</label><input type="text" id="v2-empresa" placeholder="Nome da empresa"></div>
+          <div class="fg"><label>Telefone / WhatsApp</label><input type="tel" id="v2-telefone" placeholder="+55 (11) 99999-9999"></div>
         </div>
+        <div class="fg"><label>Empresa</label><input type="text" id="v2-empresa" placeholder="Nome da empresa"></div>
         <div class="fg">
           <label>Faturamento Anual *</label>
           <select id="v2-faturamento" required>
@@ -782,6 +810,7 @@ async function submitV2(){
   const nome=document.getElementById('v2-nome').value.trim();
   const email=document.getElementById('v2-email').value.trim();
   const cargo=document.getElementById('v2-cargo').value.trim();
+  const telefone=document.getElementById('v2-telefone').value.trim();
   const empresa=document.getElementById('v2-empresa').value.trim();
   const faturamento=document.getElementById('v2-faturamento').value;
   const contexto=document.getElementById('v2-contexto').value.trim();
@@ -798,7 +827,7 @@ async function submitV2(){
     const res=await fetch('/api/contact',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({nome,email,cargo,empresa,faturamento,produtos,contexto})
+      body:JSON.stringify({nome,email,cargo,telefone,empresa,faturamento,produtos,contexto})
     });
     const data=await res.json();
     if(!res.ok) throw new Error(data.error||'Erro ao enviar');
