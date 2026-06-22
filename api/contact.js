@@ -12,14 +12,12 @@ export default async function handler(req, res) {
   const PORTAL_ID = '50947681';
   const FORM_GUID = 'a1d952ec-0932-4988-9e54-f091d751ce44';
 
+  const nomeParts = nome.trim().split(' ');
   const fields = [
-    { name: 'firstname', value: nome.split(' ')[0] },
-    { name: 'lastname',  value: nome.split(' ').slice(1).join(' ') || '' },
+    { name: 'firstname', value: nomeParts[0] },
+    { name: 'lastname',  value: nomeParts.slice(1).join(' ') || nomeParts[0] },
     { name: 'email',     value: email },
-    { name: 'jobtitle',  value: cargo || '' },
-    { name: 'company',   value: empresa || '' },
-    { name: 'message',   value: [produto ? `Solução: ${produto}` : '', contexto || ''].filter(Boolean).join('\n') },
-  ].filter(f => f.value);
+  ];
 
   try {
     const hsRes = await fetch(
