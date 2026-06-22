@@ -23,25 +23,22 @@ export default async function handler(req, res) {
       const payload = JSON.stringify({ nome, email, cargo, empresa, faturamento, produtos, contexto });
       const postOpts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload };
 
-      // Primeira tentativa: segue redirect manual
-      let sRes = await fetch(SHEETS_URL, { ...postOpts, redirect: 'manual' });
-      if (sRes.status === 302 || sRes.status === 301) {
-        const redirectUrl = sRes.headers.get('location');
-        if (redirectUrl) sRes = await fetch(redirectUrl, postOpts);
-      }
-      sheetsOk = sRes.ok || sRes.status === 0; // status 0 = opaque redirect (também ok)
+      // Apps Script executa doPost ANTES de redirecionar (302 = sucesso, script já rodou)
+      const sRes = await fetch(SHEETS_URL, { ...postOpts, redirect: 'manual' });
+      sheetsOk = sRes.status === 302 || sRes.status === 200 || sRes.status === 0;
 
       if (!sheetsOk) {
-        // Fallback: tenta como GET com params na URL (Apps Script aceita doGet também)
+        console.error('Sheets POST error, status:', sRes.status);
+        // Fallback GET com params na URL
         const params = new URLSearchParams({
           nome, email, cargo: cargo||'', empresa: empresa||'',
           faturamento: faturamento||'',
           produtos: Array.isArray(produtos) ? produtos.join(';') : (produtos||''),
           contexto: contexto||''
         });
-        const gRes = await fetch(`${SHEETS_URL}?${params.toString()}`, { method: 'GET' });
-        sheetsOk = gRes.ok;
-        if (!sheetsOk) console.error('Sheets GET error:', await gRes.text().catch(()=>''));
+        const gRes = await fetch(`${SHEETS_URL}?${params.toString()}`, { method: 'GET', redirect: 'manual' });
+        sheetsOk = gRes.status === 302 || gRes.status === 200;
+        if (!sheetsOk) console.error('Sheets GET error, status:', gRes.status);
       }
     } catch (err) {
       console.error('Sheets fetch error:', err.message);
