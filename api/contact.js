@@ -6,18 +6,29 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { nome, email, cargo, empresa, produto, contexto } = req.body;
+  const { nome, email, cargo, empresa, faturamento, produtos, contexto } = req.body;
   if (!nome || !email) return res.status(400).json({ error: 'Nome e e-mail são obrigatórios' });
 
   const PORTAL_ID = '50947681';
   const FORM_GUID = 'a1d952ec-0932-4988-9e54-f091d751ce44';
 
   const nomeParts = nome.trim().split(' ');
+  const firstname = nomeParts[0];
+  const lastname  = nomeParts.slice(1).join(' ') || '';
+
   const fields = [
-    { name: 'firstname', value: nomeParts[0] },
-    { name: 'lastname',  value: nomeParts.slice(1).join(' ') || nomeParts[0] },
-    { name: 'email',     value: email },
+    { name: 'firstname', value: firstname },
+    { name: 'lastname',  value: lastname  },
+    { name: 'email',     value: email     },
   ];
+  if (cargo)      fields.push({ name: 'jobtitle', value: cargo });
+  if (empresa)    fields.push({ name: 'company',  value: empresa });
+  if (faturamento) fields.push({ name: 'faturamento_anual', value: faturamento });
+  if (produtos && produtos.length > 0) {
+    const val = Array.isArray(produtos) ? produtos.join(';') : produtos;
+    fields.push({ name: 'produto_de_interesse', value: val });
+  }
+  if (contexto)   fields.push({ name: 'message', value: contexto });
 
   try {
     const hsRes = await fetch(
@@ -27,13 +38,19 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fields,
-          context: { pageUri: 'https://nura-9fs3vi4ae-albertoazevedo-dotcoms-projects.vercel.app', pageName: 'Nura AI LP' },
+          context: {
+            pageUri:  'https://somosnura.com',
+            pageName: 'Nura AI — A inteligência que transforma o seu negócio',
+          },
         }),
       }
     );
 
-    const data = await hsRes.json();
-    if (!hsRes.ok) throw new Error(data.message || JSON.stringify(data.errors));
+    if (!hsRes.ok) {
+      const err = await hsRes.json();
+      throw new Error(err.message || JSON.stringify(err));
+    }
+
     return res.status(200).json({ success: true });
 
   } catch (err) {
