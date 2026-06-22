@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const { nome, email, cargo, empresa, faturamento, produtos, contexto } = req.body;
   if (!nome || !email) return res.status(400).json({ error: 'Nome e e-mail são obrigatórios' });
 
-  const SHEETS_URL   = process.env.SHEETS_URL || 'https://script.google.com/macros/s/AKfycbzF9gv-FrMJAfA_OgOPIIjXS2C4FbyvNDk7WzkAi19oKfrW_JIbOx-w_RpkqiED3tp9/exec';
+  const SHEETS_URL   = process.env.SHEETS_URL || 'https://script.google.com/a/macros/somosnura.com/s/AKfycbw5frK8IoEIwKXf7Knqn9UwNF7-qkDyl8mCbom723SlucDTpHelx-0l6nxNO6iaJl4g/exec';
   const PORTAL_ID    = '50947681';
   const FORM_GUID    = 'a1d952ec-0932-4988-9e54-f091d751ce44';
 
@@ -17,15 +17,32 @@ export default async function handler(req, res) {
   let hubspotOk = false;
 
   // ── 1. Google Sheets (garantia principal) ─────────────────────────────────
+  // Apps Script faz redirect 302 no POST — precisamos seguir manualmente
   if (SHEETS_URL) {
     try {
-      const sRes = await fetch(SHEETS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, cargo, empresa, faturamento, produtos, contexto }),
-      });
-      sheetsOk = sRes.ok;
-      if (!sheetsOk) console.error('Sheets error:', await sRes.text());
+      const payload = JSON.stringify({ nome, email, cargo, empresa, faturamento, produtos, contexto });
+      const postOpts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload };
+
+      // Primeira tentativa: segue redirect manual
+      let sRes = await fetch(SHEETS_URL, { ...postOpts, redirect: 'manual' });
+      if (sRes.status === 302 || sRes.status === 301) {
+        const redirectUrl = sRes.headers.get('location');
+        if (redirectUrl) sRes = await fetch(redirectUrl, postOpts);
+      }
+      sheetsOk = sRes.ok || sRes.status === 0; // status 0 = opaque redirect (também ok)
+
+      if (!sheetsOk) {
+        // Fallback: tenta como GET com params na URL (Apps Script aceita doGet também)
+        const params = new URLSearchParams({
+          nome, email, cargo: cargo||'', empresa: empresa||'',
+          faturamento: faturamento||'',
+          produtos: Array.isArray(produtos) ? produtos.join(';') : (produtos||''),
+          contexto: contexto||''
+        });
+        const gRes = await fetch(`${SHEETS_URL}?${params.toString()}`, { method: 'GET' });
+        sheetsOk = gRes.ok;
+        if (!sheetsOk) console.error('Sheets GET error:', await gRes.text().catch(()=>''));
+      }
     } catch (err) {
       console.error('Sheets fetch error:', err.message);
     }
