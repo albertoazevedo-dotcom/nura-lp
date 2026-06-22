@@ -9,64 +9,91 @@ export default async function handler(req, res) {
   const { nome, email, cargo, empresa, faturamento, produtos, contexto } = req.body;
   if (!nome || !email) return res.status(400).json({ error: 'Nome e e-mail são obrigatórios' });
 
-  const PORTAL_ID = '50947681';
-  const FORM_GUID = 'a1d952ec-0932-4988-9e54-f091d751ce44';
+  const SHEETS_URL   = process.env.SHEETS_URL;   // URL do Apps Script (webhook)
+  const PORTAL_ID    = '50947681';
+  const FORM_GUID    = 'a1d952ec-0932-4988-9e54-f091d751ce44';
 
-  const nomeParts = nome.trim().split(' ');
-  const firstname = nomeParts[0];
-  const lastname  = nomeParts.slice(1).join(' ') || '';
+  let sheetsOk  = false;
+  let hubspotOk = false;
 
-  // Monta o campo message com todas as infos extras para garantir que chegam
-  const messageLines = [];
-  if (faturamento) messageLines.push(`Faturamento anual: ${faturamento}`);
-  if (contexto)    messageLines.push(contexto);
-  const messageValue = messageLines.join('\n\n');
-
-  // Apenas propriedades de contato (0-1) — sem objectTypeId para máxima compatibilidade
-  const fields = [
-    { name: 'firstname', value: firstname },
-    { name: 'lastname',  value: lastname  },
-    { name: 'email',     value: email     },
-  ];
-  if (cargo)                fields.push({ name: 'jobtitle', value: cargo });
-  if (empresa)              fields.push({ name: 'company',  value: empresa });
-  if (messageValue)         fields.push({ name: 'message',  value: messageValue });
-  if (produtos && produtos.length > 0) {
-    const val = Array.isArray(produtos) ? produtos.join(';') : produtos;
-    fields.push({ name: 'produto_de_interesse', value: val });
-  }
-
-  try {
-    const hsRes = await fetch(
-      `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_GUID}`,
-      {
+  // ── 1. Google Sheets (garantia principal) ─────────────────────────────────
+  if (SHEETS_URL) {
+    try {
+      const sRes = await fetch(SHEETS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          submittedAt: Date.now().toString(),
-          fields,
-          context: {
-            pageUri:  'https://nura-lp-theta.vercel.app',
-            pageName: 'Nura AI — A inteligência que transforma o seu negócio',
-          },
-        }),
-      }
-    );
-
-    const body = await hsRes.json();
-
-    if (!hsRes.ok) {
-      console.error('HubSpot error:', JSON.stringify(body));
-      return res.status(400).json({
-        error: body.message || 'HubSpot error',
-        details: body.errors || body,
+        body: JSON.stringify({ nome, email, cargo, empresa, faturamento, produtos, contexto }),
       });
+      sheetsOk = sRes.ok;
+      if (!sheetsOk) console.error('Sheets error:', await sRes.text());
+    } catch (err) {
+      console.error('Sheets fetch error:', err.message);
     }
-
-    return res.status(200).json({ success: true });
-
-  } catch (err) {
-    console.error('Server error:', err);
-    return res.status(500).json({ error: err.message });
   }
+
+  // ── 2. HubSpot Contacts API v3 (se token disponível) ──────────────────────
+  const HUBSPOT_TOKEN = process.env.HUBSPOT_TOKEN;
+  if (HUBSPOT_TOKEN) {
+    try {
+      const nomeParts = nome.trim().split(' ');
+      const properties = {
+        firstname:  nomeParts[0],
+        lastname:   nomeParts.slice(1).join(' ') || '',
+        email,
+        jobtitle:   cargo    || '',
+        company:    empresa  || '',
+        message:    [
+          faturamento ? `Faturamento: ${faturamento}` : '',
+          contexto || '',
+        ].filter(Boolean).join('\n\n'),
+        produto_de_interesse: Array.isArray(produtos) ? produtos.join(';') : (produtos || ''),
+        hs_lead_status: 'NEW',
+      };
+
+      const createRes = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${HUBSPOT_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ properties }),
+      });
+
+      if (createRes.status === 409) {
+        // Contato já existe — atualiza
+        const searchRes = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/search', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${HUBSPOT_TOKEN}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filterGroups: [{ filters: [{ propertyName: 'email', operator: 'EQ', value: email }] }],
+            limit: 1,
+          }),
+        });
+        const { results } = await searchRes.json();
+        if (results?.length) {
+          await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${results[0].id}`, {
+            method: 'PATCH',
+            headers: { 'Authorization': `Bearer ${HUBSPOT_TOKEN}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ properties }),
+          });
+        }
+        hubspotOk = true;
+      } else {
+        hubspotOk = createRes.ok;
+        if (!hubspotOk) console.error('HubSpot error:', await createRes.text());
+      }
+    } catch (err) {
+      console.error('HubSpot fetch error:', err.message);
+    }
+  }
+
+  // ── Resposta ──────────────────────────────────────────────────────────────
+  // Considera sucesso se ao menos um dos destinos funcionou
+  if (sheetsOk || hubspotOk) {
+    return res.status(200).json({ success: true, sheets: sheetsOk, hubspot: hubspotOk });
+  }
+
+  // Se nenhum funcionou mas não há integração configurada, retorna ok (não bloqueia o lead)
+  if (!SHEETS_URL && !HUBSPOT_TOKEN) {
+    return res.status(200).json({ success: true, warning: 'Sem destino configurado' });
+  }
+
+  return res.status(500).json({ error: 'Falha ao salvar lead. Tente novamente.' });
 }
